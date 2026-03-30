@@ -1,4 +1,4 @@
-import { writeFile, unlink } from "fs/promises";
+import { writeFile, unlink, mkdir } from "fs/promises";
 import { join } from "path";
 
 const ALLOWED_MIME_TYPES = ["application/pdf", "image/png", "image/jpeg"];
@@ -22,6 +22,7 @@ export async function saveFile(file: File, invoiceId: string): Promise<string> {
   const filename = `${invoiceId}_${sanitized}.${ext}`;
   const filePath = join(UPLOAD_DIR, filename);
 
+  await mkdir(UPLOAD_DIR, { recursive: true });
   const buffer = Buffer.from(await file.arrayBuffer());
   await writeFile(filePath, buffer);
 
