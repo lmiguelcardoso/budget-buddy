@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Invoice {
+  id                String       @id @default(uuid()) @db.Uuid
+  fileName          String       @map("file_name") @db.VarChar(255)
+  filePath          String       @map("file_path") @db.VarChar(500)
+  fileSize          Int          @map("file_size")
+  fileType          String       @map("file_type") @db.VarChar(50)
+  uploadDate        DateTime     @default(now()) @map("upload_date")
+  processingStatus  String       @default("pending") @map("processing_status") @db.VarChar(50)
+  ocrConfidence     Decimal?     @map("ocr_confidence") @db.Decimal(5, 2)
+  invoiceDate       DateTime?    @map("invoice_date") @db.Date
+  dueDate           DateTime?    @map("due_date") @db.Date
+  totalAmount       Decimal?     @map("total_amount") @db.Decimal(12, 2)
+  cardLastFour      String?      @map("card_last_four") @db.VarChar(4)
+  cardIssuer        String?      @map("card_issuer") @db.VarChar(100)
+  confirmedAt       DateTime?    @map("confirmed_at")
+  createdAt         DateTime     @default(now()) @map("created_at")
+  updatedAt         DateTime     @updatedAt @map("updated_at")
+  transactions      Transaction[]
+
+  @@index([processingStatus])
+  @@index([invoiceDate])
+  @@map("invoices")
+}
+
+model Transaction {
+  id              String    @id @default(uuid()) @db.Uuid
+  invoiceId       String    @map("invoice_id") @db.Uuid
+  transactionDate DateTime  @map("transaction_date") @db.Date
+  description     String
+  amount          Decimal   @db.Decimal(12, 2)
+  category        String?   @db.VarChar(100)
+  merchant        String?   @db.VarChar(255)
+  ocrConfidence   Decimal?  @map("ocr_confidence") @db.Decimal(5, 2)
+  isEdited        Boolean   @default(false) @map("is_edited")
+  notes           String?
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  invoice         Invoice   @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+  @@index([transactionDate])
+  @@index([category])
+  @@map("transactions")
+}
+
+model Category {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @unique @db.VarChar(100)
+  icon      String?  @db.VarChar(50)
+  color     String?  @db.VarChar(7)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("categories")
+}
