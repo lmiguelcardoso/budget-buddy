@@ -47,6 +47,14 @@ make dev                  # start Next.js dev server
 
 Index of every implementation plan created for this project. Add a row here each time a new plan is created.
 
+Plans live in `plans/`. Each plan file follows this structure:
+- **Goal** — what the feature does
+- **Scope** — API routes, pages, and components in scope
+- **Files to Create** — new files only
+- **Files Already in Place** — dependencies that exist and won't change
+- **Implementation Steps** — ordered, actionable steps
+- **Acceptance Criteria** — checklist to verify the feature is done
+
 | Plan | Feature / Branch | Created |
 |------|-----------------|---------|
-| _(none yet)_ | | |
+| [plans/feature-invoice-upload.md](plans/feature-invoice-upload.md) | Invoice upload / `feature/invoice-upload` | 2026-03-30 |
