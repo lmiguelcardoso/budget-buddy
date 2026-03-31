@@ -1,4 +1,7 @@
 import { readFile } from "fs/promises";
+import { createLogger } from "@/lib/logger";
+
+const logger = createLogger("lib/ocr");
 
 interface OcrTransaction {
   date: string;
@@ -21,12 +24,17 @@ export async function extractTransactions(
   fileType: string,
   apiKey: string
 ): Promise<OcrResult> {
+  logger.info("Starting OCR extraction", { filePath, fileType });
+
+  logger.debug("Reading file from disk", { filePath });
   const buffer = await readFile(filePath);
   const base64 = buffer.toString("base64");
+  logger.debug("File encoded to base64", { bytes: buffer.length });
 
   const mimeType = fileType === "application/pdf" ? "image/jpeg" : fileType;
   const imageUrl = `data:${mimeType};base64,${base64}`;
 
+  logger.info("Sending request to OpenAI GPT-4 Vision");
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -55,15 +63,29 @@ export async function extractTransactions(
   });
 
   if (!response.ok) {
+    logger.error("OpenAI API request failed", {
+      status: response.status,
+      statusText: response.statusText,
+    });
     throw new Error(`OpenAI API error: ${response.statusText}`);
   }
+
+  logger.info("OpenAI response received", { status: response.status });
 
   const json = await response.json();
   const content = json.choices?.[0]?.message?.content;
 
   if (!content) {
+    logger.error("No content in OpenAI response", { response: JSON.stringify(json) });
     throw new Error("No content returned from OpenAI");
   }
 
-  return JSON.parse(content) as OcrResult;
+  const result = JSON.parse(content) as OcrResult;
+  logger.info("OCR extraction complete", {
+    transactionCount: result.transactions?.length ?? 0,
+    invoiceDate: result.invoice_date,
+    totalAmount: result.total_amount,
+  });
+
+  return result;
 }
