@@ -1,24 +1,10 @@
 import { NextRequest } from "next/server";
-import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { ok, badRequest, serverError } from "@/lib/response";
 import { createLogger } from "@/lib/logger";
-import { Prisma } from "@prisma/client";
+import { serializeLiability, createLiabilitySchema } from "./_helpers";
 
 const logger = createLogger("api/liabilities");
-
-function serializeLiability(liability: Prisma.LiabilityGetPayload<object>) {
-  return {
-    ...liability,
-    amount: liability.amount.toString(),
-  };
-}
-
-const createLiabilitySchema = z.object({
-  name: z.string().min(1),
-  type: z.enum(["MORTGAGE", "CREDIT_CARD", "STUDENT_LOAN", "OTHER"]),
-  amount: z.number().positive(),
-});
 
 export async function GET() {
   try {

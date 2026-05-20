@@ -1,21 +1,11 @@
 import { NextRequest } from "next/server";
-import { z } from "zod";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { ok, badRequest, notFound, serverError } from "@/lib/response";
 import { createLogger } from "@/lib/logger";
+import { serializeLiability, updateLiabilitySchema } from "../_helpers";
 
 const logger = createLogger("api/liabilities/[id]");
-
-const updateLiabilitySchema = z
-  .object({
-    name: z.string().min(1).optional(),
-    type: z
-      .enum(["MORTGAGE", "CREDIT_CARD", "STUDENT_LOAN", "OTHER"])
-      .optional(),
-    amount: z.number().positive().optional(),
-  })
-  .strict();
 
 export async function PUT(
   req: NextRequest,
@@ -33,7 +23,7 @@ export async function PUT(
       data: parsed.data,
     });
     logger.info("Liability updated", { id });
-    return ok({ ...liability, amount: liability.amount.toString() });
+    return ok(serializeLiability(liability));
   } catch (err) {
     if (
       err instanceof Prisma.PrismaClientKnownRequestError &&

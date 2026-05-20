@@ -1,32 +1,11 @@
 import { NextRequest } from "next/server";
-import { z } from "zod";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { ok, badRequest, notFound, serverError } from "@/lib/response";
 import { createLogger } from "@/lib/logger";
+import { serializeAsset, updateAssetSchema } from "../_helpers";
 
 const logger = createLogger("api/assets/[id]");
-
-function serializeAsset(asset: Prisma.AssetGetPayload<object>) {
-  const price = asset.cachedPrice ?? asset.manualPrice;
-  return {
-    ...asset,
-    quantity: asset.quantity.toString(),
-    manualPrice: asset.manualPrice?.toString() ?? null,
-    cachedPrice: asset.cachedPrice?.toString() ?? null,
-    currentValue: price ? asset.quantity.times(price).toFixed(2) : "0.00",
-  };
-}
-
-const updateAssetSchema = z
-  .object({
-    name: z.string().min(1).optional(),
-    type: z.enum(["STOCK", "CRYPTO", "TREASURY", "CASH", "OTHER"]).optional(),
-    ticker: z.string().min(1).nullable().optional(),
-    quantity: z.number().positive().optional(),
-    manualPrice: z.number().positive().nullable().optional(),
-  })
-  .strict();
 
 export async function PUT(
   req: NextRequest,
