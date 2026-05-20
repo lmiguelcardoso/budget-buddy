@@ -1,0 +1,21 @@
+app/globals.css
+  s_2d507cbd50a5cf::t_c9abef38ebf49f 10-11
+app/layout.tsx
+  s_2d507cbd50a5cf::t_87418cf0155ad6 2,7,9,24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.11",
+  "base_commit_sha": "7ca2ce48d4fb866799d2ef20aa3aa2f40b42db36",
+  "prompts": {},
+  "sessions": {
+    "s_2d507cbd50a5cf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ee9b8996-9d74-4367-83b2-35045344a3c9",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Miguel <mi_lmc@hotmail.com>"
+    }
+  }
+}
