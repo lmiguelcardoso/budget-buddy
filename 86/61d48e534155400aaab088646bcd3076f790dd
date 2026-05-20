@@ -1,0 +1,35 @@
+app/api/networth/snapshot/route.ts
+  s_2d507cbd50a5cf::t_3e959dd23b65e7 4,15,23
+app/api/liabilities/[id]/route.ts
+  s_2d507cbd50a5cf::t_ebc98978a6975f 6,26
+app/api/liabilities/route.ts
+  s_2d507cbd50a5cf::t_64edbd6a5dbb29 5
+app/api/assets/[id]/route.ts
+  s_2d507cbd50a5cf::t_3b6340efb75ed5 6
+app/api/liabilities/_helpers.ts
+  s_2d507cbd50a5cf::t_37c4a1188fa4df 1-23
+app/api/assets/_helpers.ts
+  s_2d507cbd50a5cf::t_9510101a20aea0 1-51
+app/api/assets/route.ts
+  s_2d507cbd50a5cf::t_442d7d32d876a0 6
+app/api/networth/_helpers.ts
+  s_2d507cbd50a5cf::t_02e2e15339adfb 1-35
+app/api/networth/route.ts
+  s_2d507cbd50a5cf::t_b8bdced08e6542 5,23,35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.11",
+  "base_commit_sha": "8661d48e534155400aaab088646bcd3076f790dd",
+  "prompts": {},
+  "sessions": {
+    "s_2d507cbd50a5cf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ee9b8996-9d74-4367-83b2-35045344a3c9",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Miguel <mi_lmc@hotmail.com>"
+    }
+  }
+}
