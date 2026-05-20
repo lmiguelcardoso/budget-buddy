@@ -1,0 +1,283 @@
+export const LANGUAGES = [
+  { value: "en", label: "English" },
+  { value: "pt-BR", label: "Português (BR)" },
+  { value: "es", label: "Español" },
+] as const;
+
+export const CURRENCIES = [
+  { value: "USD", label: "USD — US Dollar" },
+  { value: "EUR", label: "EUR — Euro" },
+  { value: "BRL", label: "BRL — Real Brasileiro" },
+  { value: "GBP", label: "GBP — British Pound" },
+  { value: "JPY", label: "JPY — Japanese Yen" },
+  { value: "ARS", label: "ARS — Peso Argentino" },
+  { value: "CLP", label: "CLP — Peso Chileno" },
+  { value: "COP", label: "COP — Peso Colombiano" },
+  { value: "MXN", label: "MXN — Peso Mexicano" },
+] as const;
+
+export type Language = (typeof LANGUAGES)[number]["value"];
+export type Currency = (typeof CURRENCIES)[number]["value"];
+
+const translations = {
+  en: {
+    // Nav
+    "nav.dashboard": "Dashboard",
+    "nav.assets": "Assets",
+    "nav.settings": "Settings",
+
+    // Dashboard
+    "dashboard.title": "Net Worth",
+    "dashboard.manage_assets": "Manage Assets",
+    "dashboard.asset_breakdown": "Asset Breakdown",
+    "dashboard.history": "Net Worth History",
+    "dashboard.no_snapshots": "No snapshots yet. Click \"Take Snapshot\" to record today's net worth.",
+    "dashboard.take_snapshot": "Take Snapshot",
+    "dashboard.saving": "Saving…",
+
+    // Net worth summary
+    "summary.total_assets": "Total Assets",
+    "summary.total_liabilities": "Total Liabilities",
+    "summary.net_worth": "Net Worth",
+
+    // Snapshot table
+    "snapshot.date": "Date",
+    "snapshot.assets": "Assets",
+    "snapshot.liabilities": "Liabilities",
+    "snapshot.net_worth": "Net Worth",
+
+    // Assets page
+    "assets.title": "Assets & Liabilities",
+    "assets.refresh_prices": "Refresh Prices",
+    "assets.refreshing": "Refreshing…",
+    "assets.refresh_result": "Updated {n} price(s).",
+    "assets.refresh_failed": "Failed:",
+    "assets.section": "Assets",
+    "assets.add": "+ Add Asset",
+    "assets.empty": "No assets yet. Add your first asset above.",
+    "assets.col.name": "Name",
+    "assets.col.type": "Type",
+    "assets.col.quantity": "Quantity",
+    "assets.col.price": "Price",
+    "assets.col.value": "Value",
+    "assets.edit": "Edit",
+    "assets.delete": "Delete",
+
+    // Liabilities
+    "liabilities.section": "Liabilities",
+    "liabilities.add": "+ Add Liability",
+    "liabilities.empty": "No liabilities yet. Add your debts above.",
+    "liabilities.col.name": "Name",
+    "liabilities.col.type": "Type",
+    "liabilities.col.amount": "Amount",
+
+    // Asset form
+    "form.add_asset": "Add Asset",
+    "form.edit_asset": "Edit Asset",
+    "form.add_liability": "Add Liability",
+    "form.edit_liability": "Edit Liability",
+    "form.name": "Name",
+    "form.type": "Type",
+    "form.coin": "Coin",
+    "form.ticker": "Ticker Symbol",
+    "form.quantity": "Quantity",
+    "form.value_usd": "Value (USD)",
+    "form.save": "Save Changes",
+    "form.add": "Add",
+    "form.saving": "Saving…",
+    "form.cancel": "Cancel",
+    "form.select_coin": "Select a coin…",
+    "form.select_type": "Select type…",
+    "form.coingecko_hint": "Use the CoinGecko ID (e.g. bitcoin, ethereum, solana)",
+    "form.error_network": "Network error",
+
+    // Asset types
+    "type.STOCK": "Stock",
+    "type.CRYPTO": "Crypto",
+    "type.TREASURY": "Treasury",
+    "type.CASH": "Cash",
+    "type.OTHER": "Other",
+    "type.MORTGAGE": "Mortgage",
+    "type.CREDIT_CARD": "Credit Card",
+    "type.STUDENT_LOAN": "Student Loan",
+
+    // Settings modal
+    "settings.title": "Settings",
+    "settings.appearance": "Appearance",
+    "settings.dark_mode": "Dark Mode",
+    "settings.currency": "Currency",
+    "settings.currency_desc": "Used to format all monetary values",
+    "settings.language": "Language",
+    "settings.language_desc": "Display language for the interface",
+  },
+
+  "pt-BR": {
+    "nav.dashboard": "Painel",
+    "nav.assets": "Ativos",
+    "nav.settings": "Configurações",
+
+    "dashboard.title": "Patrimônio Líquido",
+    "dashboard.manage_assets": "Gerenciar Ativos",
+    "dashboard.asset_breakdown": "Composição dos Ativos",
+    "dashboard.history": "Histórico do Patrimônio",
+    "dashboard.no_snapshots": "Nenhum registro ainda. Clique em \"Salvar Registro\" para registrar o patrimônio de hoje.",
+    "dashboard.take_snapshot": "Salvar Registro",
+    "dashboard.saving": "Salvando…",
+
+    "summary.total_assets": "Total de Ativos",
+    "summary.total_liabilities": "Total de Dívidas",
+    "summary.net_worth": "Patrimônio Líquido",
+
+    "snapshot.date": "Data",
+    "snapshot.assets": "Ativos",
+    "snapshot.liabilities": "Dívidas",
+    "snapshot.net_worth": "Patrimônio",
+
+    "assets.title": "Ativos e Dívidas",
+    "assets.refresh_prices": "Atualizar Preços",
+    "assets.refreshing": "Atualizando…",
+    "assets.refresh_result": "{n} preço(s) atualizado(s).",
+    "assets.refresh_failed": "Falhou:",
+    "assets.section": "Ativos",
+    "assets.add": "+ Adicionar Ativo",
+    "assets.empty": "Nenhum ativo ainda. Adicione seu primeiro ativo acima.",
+    "assets.col.name": "Nome",
+    "assets.col.type": "Tipo",
+    "assets.col.quantity": "Quantidade",
+    "assets.col.price": "Preço",
+    "assets.col.value": "Valor",
+    "assets.edit": "Editar",
+    "assets.delete": "Excluir",
+
+    "liabilities.section": "Dívidas",
+    "liabilities.add": "+ Adicionar Dívida",
+    "liabilities.empty": "Nenhuma dívida ainda. Adicione suas dívidas acima.",
+    "liabilities.col.name": "Nome",
+    "liabilities.col.type": "Tipo",
+    "liabilities.col.amount": "Valor",
+
+    "form.add_asset": "Adicionar Ativo",
+    "form.edit_asset": "Editar Ativo",
+    "form.add_liability": "Adicionar Dívida",
+    "form.edit_liability": "Editar Dívida",
+    "form.name": "Nome",
+    "form.type": "Tipo",
+    "form.coin": "Moeda Digital",
+    "form.ticker": "Código do Ativo",
+    "form.quantity": "Quantidade",
+    "form.value_usd": "Valor (USD)",
+    "form.save": "Salvar Alterações",
+    "form.add": "Adicionar",
+    "form.saving": "Salvando…",
+    "form.cancel": "Cancelar",
+    "form.select_coin": "Selecione uma moeda…",
+    "form.select_type": "Selecione o tipo…",
+    "form.coingecko_hint": "Use o ID do CoinGecko (ex: bitcoin, ethereum, solana)",
+    "form.error_network": "Erro de rede",
+
+    "type.STOCK": "Ação",
+    "type.CRYPTO": "Cripto",
+    "type.TREASURY": "Tesouro",
+    "type.CASH": "Dinheiro",
+    "type.OTHER": "Outro",
+    "type.MORTGAGE": "Hipoteca",
+    "type.CREDIT_CARD": "Cartão de Crédito",
+    "type.STUDENT_LOAN": "Empréstimo Estudantil",
+
+    "settings.title": "Configurações",
+    "settings.appearance": "Aparência",
+    "settings.dark_mode": "Modo Escuro",
+    "settings.currency": "Moeda",
+    "settings.currency_desc": "Usada para formatar todos os valores monetários",
+    "settings.language": "Idioma",
+    "settings.language_desc": "Idioma de exibição da interface",
+  },
+
+  es: {
+    "nav.dashboard": "Panel",
+    "nav.assets": "Activos",
+    "nav.settings": "Configuración",
+
+    "dashboard.title": "Patrimonio Neto",
+    "dashboard.manage_assets": "Gestionar Activos",
+    "dashboard.asset_breakdown": "Composición de Activos",
+    "dashboard.history": "Historial del Patrimonio",
+    "dashboard.no_snapshots": "Sin registros aún. Haz clic en \"Guardar Registro\" para registrar el patrimonio de hoy.",
+    "dashboard.take_snapshot": "Guardar Registro",
+    "dashboard.saving": "Guardando…",
+
+    "summary.total_assets": "Total Activos",
+    "summary.total_liabilities": "Total Deudas",
+    "summary.net_worth": "Patrimonio Neto",
+
+    "snapshot.date": "Fecha",
+    "snapshot.assets": "Activos",
+    "snapshot.liabilities": "Deudas",
+    "snapshot.net_worth": "Patrimonio",
+
+    "assets.title": "Activos y Deudas",
+    "assets.refresh_prices": "Actualizar Precios",
+    "assets.refreshing": "Actualizando…",
+    "assets.refresh_result": "{n} precio(s) actualizado(s).",
+    "assets.refresh_failed": "Falló:",
+    "assets.section": "Activos",
+    "assets.add": "+ Agregar Activo",
+    "assets.empty": "Sin activos aún. Agrega tu primer activo arriba.",
+    "assets.col.name": "Nombre",
+    "assets.col.type": "Tipo",
+    "assets.col.quantity": "Cantidad",
+    "assets.col.price": "Precio",
+    "assets.col.value": "Valor",
+    "assets.edit": "Editar",
+    "assets.delete": "Eliminar",
+
+    "liabilities.section": "Deudas",
+    "liabilities.add": "+ Agregar Deuda",
+    "liabilities.empty": "Sin deudas aún. Agrega tus deudas arriba.",
+    "liabilities.col.name": "Nombre",
+    "liabilities.col.type": "Tipo",
+    "liabilities.col.amount": "Monto",
+
+    "form.add_asset": "Agregar Activo",
+    "form.edit_asset": "Editar Activo",
+    "form.add_liability": "Agregar Deuda",
+    "form.edit_liability": "Editar Deuda",
+    "form.name": "Nombre",
+    "form.type": "Tipo",
+    "form.coin": "Moneda Digital",
+    "form.ticker": "Símbolo",
+    "form.quantity": "Cantidad",
+    "form.value_usd": "Valor (USD)",
+    "form.save": "Guardar Cambios",
+    "form.add": "Agregar",
+    "form.saving": "Guardando…",
+    "form.cancel": "Cancelar",
+    "form.select_coin": "Selecciona una moneda…",
+    "form.select_type": "Selecciona el tipo…",
+    "form.coingecko_hint": "Usa el ID de CoinGecko (ej: bitcoin, ethereum, solana)",
+    "form.error_network": "Error de red",
+
+    "type.STOCK": "Acción",
+    "type.CRYPTO": "Cripto",
+    "type.TREASURY": "Bonos",
+    "type.CASH": "Efectivo",
+    "type.OTHER": "Otro",
+    "type.MORTGAGE": "Hipoteca",
+    "type.CREDIT_CARD": "Tarjeta de Crédito",
+    "type.STUDENT_LOAN": "Préstamo Estudiantil",
+
+    "settings.title": "Configuración",
+    "settings.appearance": "Apariencia",
+    "settings.dark_mode": "Modo Oscuro",
+    "settings.currency": "Moneda",
+    "settings.currency_desc": "Usada para formatear todos los valores monetarios",
+    "settings.language": "Idioma",
+    "settings.language_desc": "Idioma de visualización de la interfaz",
+  },
+} as const;
+
+export type TranslationKey = keyof (typeof translations)["en"];
+
+export function getTranslations(language: string): Record<TranslationKey, string> {
+  return (translations[language as Language] ?? translations.en) as Record<TranslationKey, string>;
+}
