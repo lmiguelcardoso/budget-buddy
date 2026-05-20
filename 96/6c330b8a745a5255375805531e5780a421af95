@@ -1,0 +1,57 @@
+app/api/liabilities/_helpers.ts
+  s_2d507cbd50a5cf::t_e9c3edf3ef3964 14,22
+app/api/assets/_helpers.ts
+  s_2d507cbd50a5cf::t_eca38c36dfe41a 19,48
+app/api/networth/route.ts
+  s_2d507cbd50a5cf::t_145ac944703c6c 22,25-26,30-39
+app/api/networth/snapshot/route.ts
+  s_2d507cbd50a5cf::t_2937a4d86fb009 15,18-25,28-32
+app/api/networth/_helpers.ts
+  s_2d507cbd50a5cf::t_1f14fbc3cf0786 3-15,17,19-23,25-31,34-43,49-54,59-64
+components/liability-form.tsx
+  s_2d507cbd50a5cf::t_98d396e1a4d64b 17,24,43,60,78,107-120
+components/dashboard-client.tsx
+  s_2d507cbd50a5cf::t_8468a725f1dc7d 16,22-25,29-33,46-47,49-50,64,71-77,79-102,104,127-128,136,139-143
+app/assets/page.tsx
+  s_2d507cbd50a5cf::t_d0ef0d19335d97 35-36,41,54
+  s_2d507cbd50a5cf::t_1efd92b5cca9a7 202
+  s_2d507cbd50a5cf::t_c7dfd210147473 266
+  s_2d507cbd50a5cf::t_ddd2208cf0e531 190
+hooks/use-settings.ts
+  s_2d507cbd50a5cf::t_66bcd7d61bb68a 4,7,14,19,24
+lib/i18n.ts
+  s_2d507cbd50a5cf::t_f4946e6eddb1b6 12,33-34,46,58,67,71,115-116,128,140,149,153
+components/settings-modal.tsx
+  s_2d507cbd50a5cf::t_b3521cc37aacd9 23,25,30,34,39,79
+components/asset-form.tsx
+  s_2d507cbd50a5cf::t_a933206d456db0 69,84
+  s_2d507cbd50a5cf::t_092802e040308e 144-156
+  s_2d507cbd50a5cf::t_e8f365a85a0e6e 17,24
+  s_2d507cbd50a5cf::t_16b37a8980d317 213
+contexts/settings-context.tsx
+  s_2d507cbd50a5cf::t_b583be909caf1c 4,10
+prisma/migrations/20260520132931_add_currency/migration.sql
+  s_2d507cbd50a5cf::t_2aebc71cb60ee5 1-33
+app/page.tsx
+  s_2d507cbd50a5cf::t_c300e88a7cc50f 4,16,18-19,23-25,31-33,35-44,46,48-49,53-56
+components/net-worth-summary.tsx
+  s_2d507cbd50a5cf::t_0c88dd78ce2855 6,12-23,25-74,76,78-80
+prisma/schema.prisma
+  s_2d507cbd50a5cf::t_7b1fff7928730f 25-29,34,51,61-68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.11",
+  "base_commit_sha": "966c330b8a745a5255375805531e5780a421af95",
+  "prompts": {},
+  "sessions": {
+    "s_2d507cbd50a5cf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ee9b8996-9d74-4367-83b2-35045344a3c9",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Miguel <mi_lmc@hotmail.com>"
+    }
+  }
+}
