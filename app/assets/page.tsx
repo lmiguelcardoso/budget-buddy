@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { Fragment, useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { AssetForm } from "@/components/asset-form";
@@ -180,8 +180,8 @@ export default function AssetsPage() {
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {assets.map((asset) => (
-                    <>
-                      <tr key={asset.id} className="hover:bg-gray-50">
+                    <Fragment key={asset.id}>
+                      <tr className="hover:bg-gray-50">
                         <td className="px-4 py-3 font-medium text-gray-800">
                           {asset.name}
                           {asset.ticker && (
@@ -230,7 +230,7 @@ export default function AssetsPage() {
                         </td>
                       </tr>
                       {editingAsset?.id === asset.id && (
-                        <tr key={`${asset.id}-edit`}>
+                        <tr>
                           <td colSpan={6} className="px-4 py-3">
                             <AssetForm
                               initialValues={editingAsset}
@@ -243,7 +243,7 @@ export default function AssetsPage() {
                           </td>
                         </tr>
                       )}
-                    </>
+                    </Fragment>
                   ))}
                 </tbody>
               </table>
@@ -295,8 +295,8 @@ export default function AssetsPage() {
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {liabilities.map((liability) => (
-                    <>
-                      <tr key={liability.id} className="hover:bg-gray-50">
+                    <Fragment key={liability.id}>
+                      <tr className="hover:bg-gray-50">
                         <td className="px-4 py-3 font-medium text-gray-800">
                           {liability.name}
                         </td>
@@ -325,7 +325,7 @@ export default function AssetsPage() {
                         </td>
                       </tr>
                       {editingLiability?.id === liability.id && (
-                        <tr key={`${liability.id}-edit`}>
+                        <tr>
                           <td colSpan={4} className="px-4 py-3">
                             <LiabilityForm
                               initialValues={editingLiability}
@@ -338,7 +338,7 @@ export default function AssetsPage() {
                           </td>
                         </tr>
                       )}
-                    </>
+                    </Fragment>
                   ))}
                 </tbody>
               </table>
