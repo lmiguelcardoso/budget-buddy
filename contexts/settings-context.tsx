@@ -1,23 +1,17 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import type { Currency, Language } from "@/lib/i18n";
+import type { Language } from "@/lib/i18n";
 
 interface Settings {
-  currency: Currency;
   language: Language;
 }
 
-const DEFAULT_SETTINGS: Settings = {
-  currency: "USD",
-  language: "en",
-};
-
+const DEFAULT_SETTINGS: Settings = { language: "en" };
 const STORAGE_KEY = "budget-buddy-settings";
 
 interface SettingsContextValue {
   settings: Settings;
-  setCurrency: (currency: Currency) => void;
   setLanguage: (language: Language) => void;
 }
 
@@ -47,7 +41,6 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     <SettingsContext.Provider
       value={{
         settings,
-        setCurrency: (currency) => update({ currency }),
         setLanguage: (language) => update({ language }),
       }}
     >

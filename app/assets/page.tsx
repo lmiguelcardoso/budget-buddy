@@ -32,10 +32,13 @@ import { useSettings } from "@/hooks/use-settings";
 type AssetType = "STOCK" | "CRYPTO" | "TREASURY" | "CASH" | "OTHER";
 type LiabilityType = "MORTGAGE" | "CREDIT_CARD" | "STUDENT_LOAN" | "OTHER";
 
+type AppCurrency = "USD" | "BRL";
+
 interface Asset {
   id: string;
   name: string;
   type: AssetType;
+  currency: AppCurrency;
   ticker: string | null;
   quantity: string;
   manualPrice: string | null;
@@ -48,6 +51,7 @@ interface Liability {
   id: string;
   name: string;
   type: LiabilityType;
+  currency: AppCurrency;
   amount: string;
 }
 
@@ -183,7 +187,7 @@ export default function AssetsPage() {
                           <Tooltip>
                             <TooltipTrigger>
                               <span className="cursor-default">
-                                {formatCurrency(asset.cachedPrice ?? asset.manualPrice ?? "0")}
+                                {formatCurrency(asset.cachedPrice ?? asset.manualPrice ?? "0", asset.currency)}
                               </span>
                             </TooltipTrigger>
                             {asset.priceFetchedAt && (
@@ -195,7 +199,7 @@ export default function AssetsPage() {
                         ) : "—"}
                       </TableCell>
                       <TableCell className="text-right font-medium tabular-nums">
-                        {formatCurrency(asset.currentValue)}
+                        {formatCurrency(asset.currentValue, asset.currency)}
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-1">
@@ -259,7 +263,7 @@ export default function AssetsPage() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right font-medium text-destructive tabular-nums">
-                        {formatCurrency(liability.amount)}
+                        {formatCurrency(liability.amount, liability.currency)}
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-1">

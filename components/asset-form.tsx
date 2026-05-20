@@ -14,12 +14,14 @@ import {
 import { useSettings } from "@/hooks/use-settings";
 
 type AssetType = "STOCK" | "CRYPTO" | "TREASURY" | "CASH" | "OTHER";
+type AppCurrency = "USD" | "BRL";
 
 interface AssetFormProps {
   initialValues?: {
     id?: string;
     name: string;
     type: AssetType;
+    currency: AppCurrency;
     ticker?: string | null;
     quantity: string;
     manualPrice?: string | null;
@@ -64,6 +66,7 @@ export function AssetForm({ initialValues, onSuccess, onCancel }: AssetFormProps
   const isEdit = !!initialValues?.id;
   const [name, setName] = useState(initialValues?.name ?? "");
   const [type, setType] = useState<AssetType>(initialValues?.type ?? "STOCK");
+  const [currency, setCurrency] = useState<AppCurrency>(initialValues?.currency ?? "USD");
   const [ticker, setTicker] = useState(initialValues?.ticker ?? "");
   const [quantity, setQuantity] = useState(initialValues?.quantity ?? "");
   const [manualPrice, setManualPrice] = useState(initialValues?.manualPrice ?? "");
@@ -78,7 +81,7 @@ export function AssetForm({ initialValues, onSuccess, onCancel }: AssetFormProps
     setError("");
     setLoading(true);
 
-    const body: Record<string, unknown> = { name, type, quantity: parseFloat(quantity) };
+    const body: Record<string, unknown> = { name, type, currency, quantity: parseFloat(quantity) };
     if (needsTicker) body.ticker = ticker;
     if (needsManualPrice) body.manualPrice = parseFloat(manualPrice);
 
@@ -134,6 +137,19 @@ export function AssetForm({ initialValues, onSuccess, onCancel }: AssetFormProps
                   {t(item.tKey as Parameters<typeof t>[0])}
                 </SelectItem>
               ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="asset-currency">{t("form.currency")}</Label>
+          <Select value={currency} onValueChange={(v) => { if (v) setCurrency(v as AppCurrency); }}>
+            <SelectTrigger id="asset-currency">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="USD">USD — US Dollar</SelectItem>
+              <SelectItem value="BRL">BRL — Real Brasileiro</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -194,7 +210,7 @@ export function AssetForm({ initialValues, onSuccess, onCancel }: AssetFormProps
 
         {needsManualPrice && (
           <div className="space-y-1.5">
-            <Label htmlFor="asset-price">{t("form.value_usd")}</Label>
+            <Label htmlFor="asset-price">{t("form.value")}</Label>
             <Input
               id="asset-price"
               required

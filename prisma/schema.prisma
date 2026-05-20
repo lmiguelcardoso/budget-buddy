@@ -22,10 +22,16 @@ enum LiabilityType {
   OTHER
 }
 
+enum Currency {
+  USD
+  BRL
+}
+
 model Asset {
   id             String    @id @default(uuid()) @db.Uuid
   name           String    @db.VarChar(255)
   type           AssetType
+  currency       Currency  @default(USD)
   ticker         String?   @db.VarChar(20)
   quantity       Decimal   @db.Decimal(18, 8)
   manualPrice    Decimal?  @map("manual_price") @db.Decimal(18, 8)
@@ -42,6 +48,7 @@ model Liability {
   id        String        @id @default(uuid()) @db.Uuid
   name      String        @db.VarChar(255)
   type      LiabilityType
+  currency  Currency      @default(USD)
   amount    Decimal       @db.Decimal(18, 2)
   createdAt DateTime      @default(now()) @map("created_at")
   updatedAt DateTime      @updatedAt @map("updated_at")
@@ -51,11 +58,14 @@ model Liability {
 }
 
 model NetWorthSnapshot {
-  id               String   @id @default(uuid()) @db.Uuid
-  totalAssets      Decimal  @map("total_assets") @db.Decimal(18, 2)
-  totalLiabilities Decimal  @map("total_liabilities") @db.Decimal(18, 2)
-  netWorth         Decimal  @map("net_worth") @db.Decimal(18, 2)
-  createdAt        DateTime @default(now()) @map("created_at")
+  id                  String   @id @default(uuid()) @db.Uuid
+  totalAssetsUsd      Decimal  @map("total_assets_usd") @db.Decimal(18, 2)
+  totalLiabilitiesUsd Decimal  @map("total_liabilities_usd") @db.Decimal(18, 2)
+  netWorthUsd         Decimal  @map("net_worth_usd") @db.Decimal(18, 2)
+  totalAssetsBrl      Decimal  @map("total_assets_brl") @db.Decimal(18, 2)
+  totalLiabilitiesBrl Decimal  @map("total_liabilities_brl") @db.Decimal(18, 2)
+  netWorthBrl         Decimal  @map("net_worth_brl") @db.Decimal(18, 2)
+  createdAt           DateTime @default(now()) @map("created_at")
 
   @@index([createdAt])
   @@map("net_worth_snapshots")

@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { Prisma, Asset, Liability } from "@prisma/client";
 import { DashboardClient } from "@/components/dashboard-client";
+import { computeTotals } from "@/app/api/networth/_helpers";
 
 async function getNetworthData() {
   const [assets, liabilities, snapshots] = await Promise.all([
@@ -12,45 +13,47 @@ async function getNetworthData() {
     }),
   ]);
 
-  const totalAssets = assets.reduce((sum: Prisma.Decimal, a: Asset) => {
-    const price = a.cachedPrice ?? a.manualPrice;
-    if (!price) return sum;
-    return sum.plus(a.quantity.times(price));
-  }, new Prisma.Decimal(0));
+  const { usd, brl } = computeTotals(assets, liabilities);
 
-  const totalLiabilities = liabilities.reduce(
-    (sum: Prisma.Decimal, l: Liability) => sum.plus(l.amount),
-    new Prisma.Decimal(0)
-  );
-
-  const netWorth = totalAssets.minus(totalLiabilities);
-
-  const byType = assets.reduce<Record<string, Prisma.Decimal>>(
-    (acc: Record<string, Prisma.Decimal>, a: Asset) => {
+  const byType = assets.reduce<Record<string, { usd: Prisma.Decimal; brl: Prisma.Decimal }>>(
+    (acc, a: Asset) => {
       const price = a.cachedPrice ?? a.manualPrice;
       if (!price) return acc;
       const val = a.quantity.times(price);
-      acc[a.type] = (acc[a.type] ?? new Prisma.Decimal(0)).plus(val);
+      if (!acc[a.type]) acc[a.type] = { usd: new Prisma.Decimal(0), brl: new Prisma.Decimal(0) };
+      if (a.currency === "USD") acc[a.type].usd = acc[a.type].usd.plus(val);
+      else acc[a.type].brl = acc[a.type].brl.plus(val);
       return acc;
     },
     {}
   );
 
+  const totalAssetsUsd = usd.totalAssets.toNumber();
+  const totalAssetsBrl = brl.totalAssets.toNumber();
+
   return {
-    totalAssets: totalAssets.toFixed(2),
-    totalLiabilities: totalLiabilities.toFixed(2),
-    netWorth: netWorth.toFixed(2),
+    usd: {
+      totalAssets: usd.totalAssets.toFixed(2),
+      totalLiabilities: usd.totalLiabilities.toFixed(2),
+      netWorth: usd.netWorth.toFixed(2),
+    },
+    brl: {
+      totalAssets: brl.totalAssets.toFixed(2),
+      totalLiabilities: brl.totalLiabilities.toFixed(2),
+      netWorth: brl.netWorth.toFixed(2),
+    },
     byType: Object.fromEntries(
-      Object.entries(byType).map(([k, v]) => [k, v.toFixed(2)])
+      Object.entries(byType).map(([k, v]) => [k, { usd: v.usd.toFixed(2), brl: v.brl.toFixed(2) }])
     ),
-    totalAssetsNum: totalAssets.toNumber(),
+    totalAssetsUsd,
+    totalAssetsBrl,
     snapshots: snapshots.map((s) => ({
       id: s.id,
       createdAt: s.createdAt.toISOString(),
-      totalAssets: s.totalAssets.toFixed(2),
-      totalLiabilities: s.totalLiabilities.toFixed(2),
-      netWorth: s.netWorth.toFixed(2),
-      netWorthNum: s.netWorth.toNumber(),
+      netWorthUsd: s.netWorthUsd.toFixed(2),
+      netWorthUsdNum: s.netWorthUsd.toNumber(),
+      netWorthBrl: s.netWorthBrl.toFixed(2),
+      netWorthBrlNum: s.netWorthBrl.toNumber(),
     })),
   };
 }

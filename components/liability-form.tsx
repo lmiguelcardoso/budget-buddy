@@ -14,12 +14,14 @@ import {
 import { useSettings } from "@/hooks/use-settings";
 
 type LiabilityType = "MORTGAGE" | "CREDIT_CARD" | "STUDENT_LOAN" | "OTHER";
+type AppCurrency = "USD" | "BRL";
 
 interface LiabilityFormProps {
   initialValues?: {
     id?: string;
     name: string;
     type: LiabilityType;
+    currency: AppCurrency;
     amount: string;
   };
   onSuccess: () => void;
@@ -38,6 +40,7 @@ export function LiabilityForm({ initialValues, onSuccess, onCancel }: LiabilityF
   const isEdit = !!initialValues?.id;
   const [name, setName] = useState(initialValues?.name ?? "");
   const [type, setType] = useState<LiabilityType>(initialValues?.type ?? "CREDIT_CARD");
+  const [currency, setCurrency] = useState<AppCurrency>(initialValues?.currency ?? "USD");
   const [amount, setAmount] = useState(initialValues?.amount ?? "");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -54,7 +57,7 @@ export function LiabilityForm({ initialValues, onSuccess, onCancel }: LiabilityF
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, type, amount: parseFloat(amount) }),
+        body: JSON.stringify({ name, type, currency, amount: parseFloat(amount) }),
       });
       const json = await res.json();
       if (!json.success) { setError(json.error ?? "Something went wrong"); return; }
@@ -72,7 +75,7 @@ export function LiabilityForm({ initialValues, onSuccess, onCancel }: LiabilityF
         <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</p>
       )}
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="liability-name">{t("form.name")}</Label>
           <Input
@@ -101,7 +104,20 @@ export function LiabilityForm({ initialValues, onSuccess, onCancel }: LiabilityF
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="liability-amount">{t("liabilities.col.amount")} (USD)</Label>
+          <Label htmlFor="liability-currency">{t("form.currency")}</Label>
+          <Select value={currency} onValueChange={(v) => { if (v) setCurrency(v as AppCurrency); }}>
+            <SelectTrigger id="liability-currency">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="USD">USD — US Dollar</SelectItem>
+              <SelectItem value="BRL">BRL — Real Brasileiro</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="liability-amount">{t("form.value")}</Label>
           <Input
             id="liability-amount"
             required

@@ -16,6 +16,7 @@ export const createAssetSchema = z
   .object({
     name: z.string().min(1),
     type: z.enum(["STOCK", "CRYPTO", "TREASURY", "CASH", "OTHER"]),
+    currency: z.enum(["USD", "BRL"]),
     ticker: z.string().min(1).optional(),
     quantity: z.number().positive(),
     manualPrice: z.number().positive().optional(),
@@ -44,6 +45,7 @@ export const updateAssetSchema = z
   .object({
     name: z.string().min(1).optional(),
     type: z.enum(["STOCK", "CRYPTO", "TREASURY", "CASH", "OTHER"]).optional(),
+    currency: z.enum(["USD", "BRL"]).optional(),
     ticker: z.string().min(1).nullable().optional(),
     quantity: z.number().positive().optional(),
     manualPrice: z.number().positive().nullable().optional(),
