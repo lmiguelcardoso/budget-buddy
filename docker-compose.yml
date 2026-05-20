@@ -34,12 +34,9 @@ services:
     environment:
       DATABASE_URL: postgresql://budgetly:budgetly123@postgres:5432/budgetly
       REDIS_URL: redis://redis:6379
-      UPLOAD_DIR: /app/uploads
-      MAX_UPLOAD_SIZE: 10485760
     volumes:
       - .:/app
       - /app/node_modules
-      - app_uploads:/app/uploads
     depends_on:
       postgres:
         condition: service_healthy
@@ -49,4 +46,3 @@ services:
 volumes:
   postgres_data:
   redis_data:
-  app_uploads:
