@@ -1,3 +1,8 @@
+"use client";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useSettings } from "@/hooks/use-settings";
+
 interface NetWorthSummaryProps {
   totalAssets: string;
   totalLiabilities: string;
@@ -9,54 +14,45 @@ export function NetWorthSummary({
   totalLiabilities,
   netWorth,
 }: NetWorthSummaryProps) {
+  const { t, formatCurrency } = useSettings();
   const isPositive = !netWorth.startsWith("-");
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <p className="text-sm font-medium text-gray-500">Total Assets</p>
-        <p className="mt-1 text-2xl font-bold text-gray-900">
-          {formatCurrency(totalAssets)}
-        </p>
-      </div>
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <p className="text-sm font-medium text-gray-500">Total Liabilities</p>
-        <p className="mt-1 text-2xl font-bold text-gray-900">
-          {formatCurrency(totalLiabilities)}
-        </p>
-      </div>
-      <div
-        className={`rounded-xl border p-6 shadow-sm ${
-          isPositive
-            ? "border-green-200 bg-green-50"
-            : "border-red-200 bg-red-50"
-        }`}
-      >
-        <p
-          className={`text-sm font-medium ${
-            isPositive ? "text-green-600" : "text-red-600"
-          }`}
-        >
-          Net Worth
-        </p>
-        <p
-          className={`mt-1 text-2xl font-bold ${
-            isPositive ? "text-green-700" : "text-red-700"
-          }`}
-        >
-          {formatCurrency(netWorth)}
-        </p>
-      </div>
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium text-muted-foreground">
+            {t("summary.total_assets")}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-2xl font-bold">{formatCurrency(totalAssets)}</p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium text-muted-foreground">
+            {t("summary.total_liabilities")}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-2xl font-bold">{formatCurrency(totalLiabilities)}</p>
+        </CardContent>
+      </Card>
+
+      <Card className={isPositive ? "border-green-500/50 bg-green-500/5" : "border-red-500/50 bg-red-500/5"}>
+        <CardHeader className="pb-2">
+          <CardTitle className={`text-sm font-medium ${isPositive ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
+            {t("summary.net_worth")}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className={`text-2xl font-bold ${isPositive ? "text-green-700 dark:text-green-300" : "text-red-700 dark:text-red-300"}`}>
+            {formatCurrency(netWorth)}
+          </p>
+        </CardContent>
+      </Card>
     </div>
   );
-}
-
-function formatCurrency(value: string): string {
-  const num = parseFloat(value);
-  if (isNaN(num)) return "$0.00";
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-  }).format(num);
 }

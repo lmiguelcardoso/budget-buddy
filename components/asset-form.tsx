@@ -2,6 +2,16 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useSettings } from "@/hooks/use-settings";
 
 type AssetType = "STOCK" | "CRYPTO" | "TREASURY" | "CASH" | "OTHER";
 
@@ -17,6 +27,14 @@ interface AssetFormProps {
   onSuccess: () => void;
   onCancel: () => void;
 }
+
+const ASSET_TYPE_KEYS: { value: AssetType; tKey: string }[] = [
+  { value: "STOCK", tKey: "type.STOCK" },
+  { value: "CRYPTO", tKey: "type.CRYPTO" },
+  { value: "TREASURY", tKey: "type.TREASURY" },
+  { value: "CASH", tKey: "type.CASH" },
+  { value: "OTHER", tKey: "type.OTHER" },
+];
 
 const CRYPTO_COINS: { id: string; label: string }[] = [
   { id: "bitcoin", label: "Bitcoin (BTC)" },
@@ -41,15 +59,8 @@ const CRYPTO_COINS: { id: string; label: string }[] = [
   { id: "monero", label: "Monero (XMR)" },
 ];
 
-const ASSET_TYPES: { value: AssetType; label: string }[] = [
-  { value: "STOCK", label: "Stock" },
-  { value: "CRYPTO", label: "Crypto" },
-  { value: "TREASURY", label: "Treasury" },
-  { value: "CASH", label: "Cash" },
-  { value: "OTHER", label: "Other" },
-];
-
 export function AssetForm({ initialValues, onSuccess, onCancel }: AssetFormProps) {
+  const { t } = useSettings();
   const isEdit = !!initialValues?.id;
   const [name, setName] = useState(initialValues?.name ?? "");
   const [type, setType] = useState<AssetType>(initialValues?.type ?? "STOCK");
@@ -67,17 +78,11 @@ export function AssetForm({ initialValues, onSuccess, onCancel }: AssetFormProps
     setError("");
     setLoading(true);
 
-    const body: Record<string, unknown> = {
-      name,
-      type,
-      quantity: parseFloat(quantity),
-    };
+    const body: Record<string, unknown> = { name, type, quantity: parseFloat(quantity) };
     if (needsTicker) body.ticker = ticker;
     if (needsManualPrice) body.manualPrice = parseFloat(manualPrice);
 
-    const url = isEdit
-      ? `/api/assets/${initialValues!.id}`
-      : "/api/assets";
+    const url = isEdit ? `/api/assets/${initialValues!.id}` : "/api/assets";
     const method = isEdit ? "PUT" : "POST";
 
     try {
@@ -87,136 +92,129 @@ export function AssetForm({ initialValues, onSuccess, onCancel }: AssetFormProps
         body: JSON.stringify(body),
       });
       const json = await res.json();
-      if (!json.success) {
-        setError(json.error ?? "Something went wrong");
-        return;
-      }
+      if (!json.success) { setError(json.error ?? "Something went wrong"); return; }
       onSuccess();
     } catch {
-      setError("Network error");
+      setError(t("form.error_network"));
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3 rounded-xl border border-gray-200 bg-gray-50 p-4">
-      <h3 className="font-semibold text-gray-800">
-        {isEdit ? "Edit Asset" : "Add Asset"}
-      </h3>
-
+    <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <p className="rounded bg-red-100 px-3 py-2 text-sm text-red-700">{error}</p>
+        <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</p>
       )}
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700">Name</label>
-          <input
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="space-y-1.5">
+          <Label htmlFor="asset-name">{t("form.name")}</Label>
+          <Input
+            id="asset-name"
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="e.g. Apple Inc."
           />
         </div>
 
-        <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700">Type</label>
-          <select
+        <div className="space-y-1.5">
+          <Label htmlFor="asset-type">{t("form.type")}</Label>
+          <Select
             value={type}
-            onChange={(e) => {
-              setType(e.target.value as AssetType);
-              setTicker("");
-            }}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onValueChange={(v) => { setType(v as AssetType); setTicker(""); }}
           >
-            {ASSET_TYPES.map((t) => (
-              <option key={t.value} value={t.value}>
-                {t.label}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger id="asset-type">
+              <SelectValue placeholder={t("form.select_type")} />
+            </SelectTrigger>
+            <SelectContent>
+              {ASSET_TYPE_KEYS.map((item) => (
+                <SelectItem key={item.value} value={item.value}>
+                  {t(item.tKey as Parameters<typeof t>[0])}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         {type === "CRYPTO" && (
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Coin</label>
-            <select
-              required
+          <div className="space-y-1.5">
+            <Label htmlFor="asset-coin">{t("form.coin")}</Label>
+            <Select
               value={ticker}
-              onChange={(e) => {
-                const id = e.target.value;
+              onValueChange={(id) => {
+                if (!id) return;
                 setTicker(id);
                 if (!name) {
                   const coin = CRYPTO_COINS.find((c) => c.id === id);
                   if (coin) setName(coin.label.split(" (")[0]);
                 }
               }}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">Select a coin…</option>
-              {CRYPTO_COINS.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.label}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger id="asset-coin">
+                <SelectValue placeholder={t("form.select_coin")} />
+              </SelectTrigger>
+              <SelectContent>
+                {CRYPTO_COINS.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>{c.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">{t("form.coingecko_hint")}</p>
           </div>
         )}
 
         {type === "STOCK" && (
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Ticker Symbol</label>
-            <input
+          <div className="space-y-1.5">
+            <Label htmlFor="asset-ticker">{t("form.ticker")}</Label>
+            <Input
+              id="asset-ticker"
               required
               value={ticker}
               onChange={(e) => setTicker(e.target.value.toUpperCase())}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="e.g. AAPL"
             />
           </div>
         )}
 
-        <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700">Quantity</label>
-          <input
+        <div className="space-y-1.5">
+          <Label htmlFor="asset-quantity">{t("form.quantity")}</Label>
+          <Input
+            id="asset-quantity"
             required
             type="number"
             min="0"
             step="any"
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="e.g. 10"
           />
         </div>
 
         {needsManualPrice && (
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              Value (USD)
-            </label>
-            <input
+          <div className="space-y-1.5">
+            <Label htmlFor="asset-price">{t("form.value_usd")}</Label>
+            <Input
+              id="asset-price"
               required
               type="number"
               min="0"
               step="any"
               value={manualPrice}
               onChange={(e) => setManualPrice(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="e.g. 1000.00"
             />
           </div>
         )}
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 pt-1">
         <Button type="submit" disabled={loading} size="sm">
-          {loading ? "Saving…" : isEdit ? "Save Changes" : "Add Asset"}
+          {loading ? t("form.saving") : isEdit ? t("form.save") : t("form.add_asset")}
         </Button>
         <Button type="button" variant="outline" size="sm" onClick={onCancel}>
-          Cancel
+          {t("form.cancel")}
         </Button>
       </div>
     </form>
