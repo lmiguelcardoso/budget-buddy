@@ -12,13 +12,24 @@ export async function POST() {
       prisma.liability.findMany(),
     ]);
 
-    const { totalAssets, totalLiabilities, netWorth } = computeTotals(assets, liabilities);
+    const { usd, brl } = computeTotals(assets, liabilities);
 
     const snapshot = await prisma.netWorthSnapshot.create({
-      data: { totalAssets, totalLiabilities, netWorth },
+      data: {
+        totalAssetsUsd: usd.totalAssets,
+        totalLiabilitiesUsd: usd.totalLiabilities,
+        netWorthUsd: usd.netWorth,
+        totalAssetsBrl: brl.totalAssets,
+        totalLiabilitiesBrl: brl.totalLiabilities,
+        netWorthBrl: brl.netWorth,
+      },
     });
 
-    logger.info("Snapshot created", { id: snapshot.id, netWorth: netWorth.toFixed(2) });
+    logger.info("Snapshot created", {
+      id: snapshot.id,
+      usd: usd.netWorth.toFixed(2),
+      brl: brl.netWorth.toFixed(2),
+    });
 
     return ok(serializeSnapshot(snapshot));
   } catch (err) {
