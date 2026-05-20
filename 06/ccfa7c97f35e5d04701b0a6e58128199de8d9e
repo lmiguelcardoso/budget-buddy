@@ -1,0 +1,23 @@
+app/assets/page.tsx
+  s_2d507cbd50a5cf::t_481784854e2ed4 328,341
+  s_2d507cbd50a5cf::t_4305ff2bb26039 3
+  s_2d507cbd50a5cf::t_796e49833ffab5 183-184
+  s_2d507cbd50a5cf::t_5e710c62ae3556 233,246
+  s_2d507cbd50a5cf::t_8554a17706716a 298-299
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.11",
+  "base_commit_sha": "06ccfa7c97f35e5d04701b0a6e58128199de8d9e",
+  "prompts": {},
+  "sessions": {
+    "s_2d507cbd50a5cf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ee9b8996-9d74-4367-83b2-35045344a3c9",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Miguel <mi_lmc@hotmail.com>"
+    }
+  }
+}
