@@ -7,57 +7,56 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Invoice {
-  id                String       @id @default(uuid()) @db.Uuid
-  fileName          String       @map("file_name") @db.VarChar(255)
-  filePath          String       @map("file_path") @db.VarChar(500)
-  fileSize          Int          @map("file_size")
-  fileType          String       @map("file_type") @db.VarChar(50)
-  uploadDate        DateTime     @default(now()) @map("upload_date")
-  processingStatus  String       @default("pending") @map("processing_status") @db.VarChar(50)
-  ocrConfidence     Decimal?     @map("ocr_confidence") @db.Decimal(5, 2)
-  invoiceDate       DateTime?    @map("invoice_date") @db.Date
-  dueDate           DateTime?    @map("due_date") @db.Date
-  totalAmount       Decimal?     @map("total_amount") @db.Decimal(12, 2)
-  cardLastFour      String?      @map("card_last_four") @db.VarChar(4)
-  cardIssuer        String?      @map("card_issuer") @db.VarChar(100)
-  confirmedAt       DateTime?    @map("confirmed_at")
-  createdAt         DateTime     @default(now()) @map("created_at")
-  updatedAt         DateTime     @updatedAt @map("updated_at")
-  transactions      Transaction[]
-
-  @@index([processingStatus])
-  @@index([invoiceDate])
-  @@map("invoices")
+enum AssetType {
+  STOCK
+  CRYPTO
+  TREASURY
+  CASH
+  OTHER
 }
 
-model Transaction {
-  id              String    @id @default(uuid()) @db.Uuid
-  invoiceId       String    @map("invoice_id") @db.Uuid
-  transactionDate DateTime  @map("transaction_date") @db.Date
-  description     String
-  amount          Decimal   @db.Decimal(12, 2)
-  category        String?   @db.VarChar(100)
-  merchant        String?   @db.VarChar(255)
-  ocrConfidence   Decimal?  @map("ocr_confidence") @db.Decimal(5, 2)
-  isEdited        Boolean   @default(false) @map("is_edited")
-  notes           String?
-  createdAt       DateTime  @default(now()) @map("created_at")
-  updatedAt       DateTime  @updatedAt @map("updated_at")
-  invoice         Invoice   @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
-
-  @@index([invoiceId])
-  @@index([transactionDate])
-  @@index([category])
-  @@map("transactions")
+enum LiabilityType {
+  MORTGAGE
+  CREDIT_CARD
+  STUDENT_LOAN
+  OTHER
 }
 
-model Category {
-  id        String   @id @default(uuid()) @db.Uuid
-  name      String   @unique @db.VarChar(100)
-  icon      String?  @db.VarChar(50)
-  color     String?  @db.VarChar(7)
-  createdAt DateTime @default(now()) @map("created_at")
+model Asset {
+  id             String    @id @default(uuid()) @db.Uuid
+  name           String    @db.VarChar(255)
+  type           AssetType
+  ticker         String?   @db.VarChar(20)
+  quantity       Decimal   @db.Decimal(18, 8)
+  manualPrice    Decimal?  @map("manual_price") @db.Decimal(18, 8)
+  cachedPrice    Decimal?  @map("cached_price") @db.Decimal(18, 8)
+  priceFetchedAt DateTime? @map("price_fetched_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
 
-  @@map("categories")
+  @@index([type])
+  @@map("assets")
+}
+
+model Liability {
+  id        String        @id @default(uuid()) @db.Uuid
+  name      String        @db.VarChar(255)
+  type      LiabilityType
+  amount    Decimal       @db.Decimal(18, 2)
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
+
+  @@index([type])
+  @@map("liabilities")
+}
+
+model NetWorthSnapshot {
+  id               String   @id @default(uuid()) @db.Uuid
+  totalAssets      Decimal  @map("total_assets") @db.Decimal(18, 2)
+  totalLiabilities Decimal  @map("total_liabilities") @db.Decimal(18, 2)
+  netWorth         Decimal  @map("net_worth") @db.Decimal(18, 2)
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@map("net_worth_snapshots")
 }
