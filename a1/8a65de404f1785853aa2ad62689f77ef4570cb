@@ -1,0 +1,20 @@
+app/api/assets/route.ts
+  s_2d507cbd50a5cf::t_e51097f3a4ce9d 7
+  s_2d507cbd50a5cf::t_c32315fcae09f7 87,90-107
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.11",
+  "base_commit_sha": "a18a65de404f1785853aa2ad62689f77ef4570cb",
+  "prompts": {},
+  "sessions": {
+    "s_2d507cbd50a5cf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ee9b8996-9d74-4367-83b2-35045344a3c9",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Miguel <mi_lmc@hotmail.com>"
+    }
+  }
+}
