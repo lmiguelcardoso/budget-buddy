@@ -1,0 +1,21 @@
+app/layout.tsx
+  s_2d507cbd50a5cf::t_a3b54975a54e70 17
+CLAUDE.md
+  s_2d507cbd50a5cf::t_aefee91bda437a 5,24,34,37-38,40-46,52-53,59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.11",
+  "base_commit_sha": "cc4dc30b283ffc04c257bf24f2b81c5620835502",
+  "prompts": {},
+  "sessions": {
+    "s_2d507cbd50a5cf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ee9b8996-9d74-4367-83b2-35045344a3c9",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Miguel <mi_lmc@hotmail.com>"
+    }
+  }
+}
