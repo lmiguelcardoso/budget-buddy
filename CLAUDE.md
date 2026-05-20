@@ -2,9 +2,7 @@
 
 ## Project
 
-Personal finance management app. Users upload credit card invoices (PDF/image), extract transactions via OCR (GPT-4 Vision), review/edit them, and get spending insights.
-
-Full spec: `~/study/budgetly/NEXTJS_MIGRATION_CONTEXT.md` — single source of truth for stack, schema, API routes, OCR details, and feature backlog.
+Personal finance net worth tracker. Users add assets (stocks, crypto, treasuries, cash) and liabilities (debt), see live market prices, and track their net worth over time via snapshots.
 
 ## Stack
 
@@ -12,7 +10,6 @@ Full spec: `~/study/budgetly/NEXTJS_MIGRATION_CONTEXT.md` — single source of t
 - Prisma + PostgreSQL 16
 - Redis 7
 - shadcn/ui + lucide-react
-- GPT-4 Vision for OCR
 
 ## Git Workflow
 
@@ -24,10 +21,9 @@ Full spec: `~/study/budgetly/NEXTJS_MIGRATION_CONTEXT.md` — single source of t
 ## Local Dev
 
 ```bash
-cp .env.example .env      # fill DATABASE_URL etc.
+cp .env.example .env      # fill DATABASE_URL
 make up                   # start postgres + redis
 make migrate              # run Prisma migrations
-make seed                 # seed default categories
 make dev                  # start Next.js dev server
 ```
 
@@ -35,26 +31,29 @@ make dev                  # start Next.js dev server
 
 | Path | Purpose |
 |------|---------|
-| `prisma/schema.prisma` | DB schema — invoices, transactions, categories |
-| `prisma/seed.ts` | 9 default categories |
+| `prisma/schema.prisma` | DB schema — assets, liabilities, net_worth_snapshots |
 | `lib/db.ts` | Prisma singleton |
 | `lib/response.ts` | API response envelope helpers |
-| `lib/file.ts` | File validation + save/delete |
-| `lib/ocr.ts` | GPT-4V OCR extraction |
+| `lib/prices.ts` | Live price fetching (Yahoo Finance, CoinGecko) |
+| `lib/logger.ts` | Structured JSON logging |
 | `app/api/health/route.ts` | GET /api/health |
+| `app/api/assets/route.ts` | GET/POST /api/assets |
+| `app/api/assets/[id]/route.ts` | PUT/DELETE /api/assets/:id |
+| `app/api/assets/refresh-prices/route.ts` | POST /api/assets/refresh-prices |
+| `app/api/liabilities/route.ts` | GET/POST /api/liabilities |
+| `app/api/liabilities/[id]/route.ts` | PUT/DELETE /api/liabilities/:id |
+| `app/api/networth/route.ts` | GET /api/networth |
+| `app/api/networth/snapshot/route.ts` | POST /api/networth/snapshot |
 
 ## Plan Files
 
 Index of every implementation plan created for this project. Add a row here each time a new plan is created.
 
-Plans live in `plans/`. Each plan file follows this structure:
-- **Goal** — what the feature does
-- **Scope** — API routes, pages, and components in scope
-- **Files to Create** — new files only
-- **Files Already in Place** — dependencies that exist and won't change
+Plans live in `~/.claude/plans/`. Each plan file follows this structure:
+- **Context** — why the change is being made
 - **Implementation Steps** — ordered, actionable steps
 - **Acceptance Criteria** — checklist to verify the feature is done
 
 | Plan | Feature / Branch | Created |
 |------|-----------------|---------|
-| [plans/feature-invoice-upload.md](plans/feature-invoice-upload.md) | Invoice upload / `feature/invoice-upload` | 2026-03-30 |
+| [~/.claude/plans/i-want-to-change-vectorized-pixel.md](~/.claude/plans/i-want-to-change-vectorized-pixel.md) | Net worth tracker / `feature/invoice-upload` | 2026-05-20 |
