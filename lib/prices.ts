@@ -4,6 +4,29 @@ import { Asset } from "@prisma/client";
 
 const logger = createLogger("lib/prices");
 
+export async function fetchUsdBrlRate(): Promise<number | null> {
+  try {
+    const res = await fetch(
+      "https://api.frankfurter.app/latest?from=USD&to=BRL",
+      { next: { revalidate: 3600 } } // cache for 1 hour — ECB rates update once daily
+    );
+    if (!res.ok) {
+      logger.warn("Frankfurter API non-OK response", { status: res.status });
+      return null;
+    }
+    const data = await res.json();
+    const rate = data?.rates?.BRL;
+    if (typeof rate !== "number") {
+      logger.warn("Frankfurter API unexpected shape", { data });
+      return null;
+    }
+    return rate;
+  } catch (err) {
+    logger.error("Frankfurter API fetch failed", { err });
+    return null;
+  }
+}
+
 export async function fetchStockPrice(ticker: string): Promise<number | null> {
   try {
     const res = await fetch(

@@ -1,16 +1,15 @@
 import { prisma } from "@/lib/db";
-import { Prisma, Asset, Liability } from "@prisma/client";
+import { Prisma, Asset } from "@prisma/client";
 import { DashboardClient } from "@/components/dashboard-client";
 import { computeTotals } from "@/app/api/networth/_helpers";
+import { fetchUsdBrlRate } from "@/lib/prices";
 
 async function getNetworthData() {
-  const [assets, liabilities, snapshots] = await Promise.all([
+  const [assets, liabilities, snapshots, rate] = await Promise.all([
     prisma.asset.findMany(),
     prisma.liability.findMany(),
-    prisma.netWorthSnapshot.findMany({
-      orderBy: { createdAt: "asc" },
-      take: 10,
-    }),
+    prisma.netWorthSnapshot.findMany({ orderBy: { createdAt: "asc" }, take: 10 }),
+    fetchUsdBrlRate(),
   ]);
 
   const { usd, brl } = computeTotals(assets, liabilities);
@@ -28,8 +27,14 @@ async function getNetworthData() {
     {}
   );
 
-  const totalAssetsUsd = usd.totalAssets.toNumber();
-  const totalAssetsBrl = brl.totalAssets.toNumber();
+  // Combined totals using live exchange rate
+  // netWorthBrl (BRL) → USD: divide by rate; netWorthUsd (USD) → BRL: multiply by rate
+  const combinedUsd = rate !== null
+    ? usd.netWorth.plus(brl.netWorth.dividedBy(rate)).toFixed(2)
+    : null;
+  const combinedBrl = rate !== null
+    ? usd.netWorth.times(rate).plus(brl.netWorth).toFixed(2)
+    : null;
 
   return {
     usd: {
@@ -42,11 +47,12 @@ async function getNetworthData() {
       totalLiabilities: brl.totalLiabilities.toFixed(2),
       netWorth: brl.netWorth.toFixed(2),
     },
+    combined: { usd: combinedUsd, brl: combinedBrl, rate },
     byType: Object.fromEntries(
       Object.entries(byType).map(([k, v]) => [k, { usd: v.usd.toFixed(2), brl: v.brl.toFixed(2) }])
     ),
-    totalAssetsUsd,
-    totalAssetsBrl,
+    totalAssetsUsd: usd.totalAssets.toNumber(),
+    totalAssetsBrl: brl.totalAssets.toNumber(),
     snapshots: snapshots.map((s) => ({
       id: s.id,
       createdAt: s.createdAt.toISOString(),
