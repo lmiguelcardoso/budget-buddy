@@ -28,6 +28,7 @@ interface Snapshot {
 interface DashboardClientProps {
   usd: { totalAssets: string; totalLiabilities: string; netWorth: string };
   brl: { totalAssets: string; totalLiabilities: string; netWorth: string };
+  combined: { usd: string | null; brl: string | null; rate: number | null };
   byType: Record<string, { usd: string; brl: string }>;
   totalAssetsUsd: number;
   totalAssetsBrl: number;
@@ -45,12 +46,16 @@ const TYPE_BADGE_VARIANT: Record<string, "default" | "secondary" | "outline"> = 
 export function DashboardClient({
   usd,
   brl,
+  combined,
   byType,
   totalAssetsUsd,
   totalAssetsBrl,
   snapshots,
 }: DashboardClientProps) {
   const { t, formatCurrency } = useSettings();
+
+  const combinedUsdPositive = combined.usd === null || !combined.usd.startsWith("-");
+  const combinedBrlPositive = combined.brl === null || !combined.brl.startsWith("-");
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 space-y-8">
@@ -60,6 +65,52 @@ export function DashboardClient({
           {t("dashboard.manage_assets")}
         </Link>
       </div>
+
+      {/* Combined net worth */}
+      {(combined.usd !== null || combined.brl !== null) && (
+        <div>
+          <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            Total Net Worth
+          </p>
+          <div className="grid grid-cols-2 gap-4">
+            <Card className={combinedUsdPositive ? "border-green-500/40 bg-green-500/5" : "border-red-500/40 bg-red-500/5"}>
+              <CardHeader className="pb-1">
+                <CardTitle className={`text-xs font-medium ${combinedUsdPositive ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
+                  All in USD
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className={`text-2xl font-bold tabular-nums ${combinedUsdPositive ? "text-green-700 dark:text-green-300" : "text-red-700 dark:text-red-300"}`}>
+                  {combined.usd !== null ? formatCurrency(combined.usd, "USD") : "—"}
+                </p>
+                {combined.rate && (
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    BRL converted at {combined.rate.toFixed(4)} BRL/USD
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card className={combinedBrlPositive ? "border-green-500/40 bg-green-500/5" : "border-red-500/40 bg-red-500/5"}>
+              <CardHeader className="pb-1">
+                <CardTitle className={`text-xs font-medium ${combinedBrlPositive ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
+                  All in BRL
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className={`text-2xl font-bold tabular-nums ${combinedBrlPositive ? "text-green-700 dark:text-green-300" : "text-red-700 dark:text-red-300"}`}>
+                  {combined.brl !== null ? formatCurrency(combined.brl, "BRL") : "—"}
+                </p>
+                {combined.rate && (
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    USD converted at {combined.rate.toFixed(4)} BRL/USD
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
 
       <NetWorthSummary usd={usd} brl={brl} />
 
