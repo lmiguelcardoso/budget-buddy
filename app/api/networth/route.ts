@@ -16,22 +16,27 @@ export async function GET(req: NextRequest) {
       prisma.netWorthSnapshot.findMany({
         orderBy: { createdAt: "asc" },
         take: limit,
-        select: { id: true, netWorth: true, totalAssets: true, totalLiabilities: true, createdAt: true },
       }),
     ]);
 
-    const { totalAssets, totalLiabilities, netWorth } = computeTotals(assets, liabilities);
+    const { usd, brl } = computeTotals(assets, liabilities);
 
     logger.info("Net worth computed", {
-      totalAssets: totalAssets.toFixed(2),
-      totalLiabilities: totalLiabilities.toFixed(2),
-      netWorth: netWorth.toFixed(2),
+      usd: usd.netWorth.toFixed(2),
+      brl: brl.netWorth.toFixed(2),
     });
 
     return ok({
-      totalAssets: totalAssets.toFixed(2),
-      totalLiabilities: totalLiabilities.toFixed(2),
-      netWorth: netWorth.toFixed(2),
+      usd: {
+        totalAssets: usd.totalAssets.toFixed(2),
+        totalLiabilities: usd.totalLiabilities.toFixed(2),
+        netWorth: usd.netWorth.toFixed(2),
+      },
+      brl: {
+        totalAssets: brl.totalAssets.toFixed(2),
+        totalLiabilities: brl.totalLiabilities.toFixed(2),
+        netWorth: brl.netWorth.toFixed(2),
+      },
       snapshots: snapshots.map(serializeSnapshot),
     });
   } catch (err) {

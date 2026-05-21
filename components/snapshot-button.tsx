@@ -3,10 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { useSettings } from "@/hooks/use-settings";
 
 export function SnapshotButton() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { t } = useSettings();
 
   async function handleClick() {
     setLoading(true);
@@ -20,7 +22,7 @@ export function SnapshotButton() {
 
   return (
     <Button size="sm" variant="outline" onClick={handleClick} disabled={loading}>
-      {loading ? "Saving…" : "Take Snapshot"}
+      {loading ? t("dashboard.saving") : t("dashboard.take_snapshot")}
     </Button>
   );
 }
