@@ -1,0 +1,26 @@
+app/layout.tsx
+  s_2d507cbd50a5cf::t_63aa1c2a35bb59 4-5,28-33
+components/providers.tsx
+  s_2d507cbd50a5cf::t_c332174644f4d9 1-15
+components/navbar.tsx
+  s_2d507cbd50a5cf::t_dbd36f788ef189 1-62
+components/settings-modal.tsx
+  s_2d507cbd50a5cf::t_2d8559171d7aa0 1-4,6-27,29-32,42,48,54,63-64,66,121-122,126-127
+  s_2d507cbd50a5cf::t_504a0eec7fb9d1 5,28,33-41,43-47,49-53,55-62,65,67-120,123-125
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.11",
+  "base_commit_sha": "e9bae1c6c48c08adb911ae346e01767b5bc82ac4",
+  "prompts": {},
+  "sessions": {
+    "s_2d507cbd50a5cf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ee9b8996-9d74-4367-83b2-35045344a3c9",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Miguel <mi_lmc@hotmail.com>"
+    }
+  }
+}

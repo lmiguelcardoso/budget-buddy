@@ -1,0 +1,24 @@
+lib/prices.ts
+  s_2d507cbd50a5cf::t_91819b55c156d8 7-29
+components/dashboard-client.tsx
+  s_2d507cbd50a5cf::t_37418a1ea9c2fd 31
+  s_2d507cbd50a5cf::t_2a76391d2cdca0 49,57-59,69-113
+app/page.tsx
+  s_2d507cbd50a5cf::t_229d802648497c 2,5,8,11-12,30-37,50,54-55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.11",
+  "base_commit_sha": "f580facf3ceb343b2ca5e26ce7f89f201f1de134",
+  "prompts": {},
+  "sessions": {
+    "s_2d507cbd50a5cf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ee9b8996-9d74-4367-83b2-35045344a3c9",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Miguel <mi_lmc@hotmail.com>"
+    }
+  }
+}

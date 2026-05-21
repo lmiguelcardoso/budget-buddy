@@ -1,0 +1,28 @@
+components/dashboard-client.tsx
+  s_2d507cbd50a5cf::t_b7e5b8a0f0a1fa 1-15,17-58,62-153
+  s_2d507cbd50a5cf::t_5324712013f34d 16
+  s_2d507cbd50a5cf::t_157d74239cc2c0 59-61
+app/page.tsx
+  s_2d507cbd50a5cf::t_86c9a8a8e40d0b 3,39-55,59
+  s_2d507cbd50a5cf::t_269c381a2b23d8 60
+app/assets/page.tsx
+  s_2d507cbd50a5cf::t_d15d559abe8dff 5,7-27,30,54-62,66,69-70,81,86,104,111-117,120-123,125-131,133-134,136-139,143-144,146-147,150-183,185-201,209-210,215-223,225-226,228-231,235-236,238-239,242-265,273-274,279-287,289-290
+  s_2d507cbd50a5cf::t_0bb5bb16d48814 184
+  s_2d507cbd50a5cf::t_f1a671afc4bc16 119,140-142,202-205,207-208,211-212,232-234,266-269,271-272,275-276,291-337
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.11",
+  "base_commit_sha": "b82f5a9dd21f59f0d14612feec3026cbe69b2806",
+  "prompts": {},
+  "sessions": {
+    "s_2d507cbd50a5cf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ee9b8996-9d74-4367-83b2-35045344a3c9",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Miguel <mi_lmc@hotmail.com>"
+    }
+  }
+}

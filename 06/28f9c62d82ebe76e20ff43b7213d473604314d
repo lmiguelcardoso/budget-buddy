@@ -1,0 +1,23 @@
+contexts/settings-context.tsx
+  s_2d507cbd50a5cf::t_60e6badbdbaa7d 1-63
+lib/i18n.ts
+  s_2d507cbd50a5cf::t_20d44e68a78193 1-283
+hooks/use-settings.ts
+  s_2d507cbd50a5cf::t_221d37d36e55f5 1-31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.11",
+  "base_commit_sha": "0628f9c62d82ebe76e20ff43b7213d473604314d",
+  "prompts": {},
+  "sessions": {
+    "s_2d507cbd50a5cf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ee9b8996-9d74-4367-83b2-35045344a3c9",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Miguel <mi_lmc@hotmail.com>"
+    }
+  }
+}

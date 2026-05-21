@@ -1,0 +1,43 @@
+components/ui/label.tsx
+  s_2d507cbd50a5cf::t_8a199968700ba8 1-20
+package.json
+  s_2d507cbd50a5cf::t_3a2cfdef4c1a01 21
+components/ui/separator.tsx
+  s_2d507cbd50a5cf::t_8a199968700ba8 1-25
+components/ui/dropdown-menu.tsx
+  s_2d507cbd50a5cf::t_8a199968700ba8 1-268
+components/ui/select.tsx
+  s_2d507cbd50a5cf::t_8a199968700ba8 1-201
+components/ui/button.tsx
+  s_2d507cbd50a5cf::t_211cd41c5dc290 27
+components/ui/switch.tsx
+  s_2d507cbd50a5cf::t_8a199968700ba8 1-32
+components/ui/table.tsx
+  s_2d507cbd50a5cf::t_8a199968700ba8 1-116
+components/ui/badge.tsx
+  s_2d507cbd50a5cf::t_8a199968700ba8 1-52
+components/ui/input.tsx
+  s_2d507cbd50a5cf::t_8a199968700ba8 1-20
+components/ui/tooltip.tsx
+  s_2d507cbd50a5cf::t_8a199968700ba8 1-66
+components/ui/card.tsx
+  s_2d507cbd50a5cf::t_8a199968700ba8 1-103
+components/ui/dialog.tsx
+  s_2d507cbd50a5cf::t_211cd41c5dc290 1-160
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.11",
+  "base_commit_sha": "d6b2ad62c762b2c4df0171693fe37f5811937095",
+  "prompts": {},
+  "sessions": {
+    "s_2d507cbd50a5cf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ee9b8996-9d74-4367-83b2-35045344a3c9",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Miguel <mi_lmc@hotmail.com>"
+    }
+  }
+}
