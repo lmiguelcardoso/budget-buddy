@@ -1,0 +1,21 @@
+.env.example
+  s_f55da6088da1e3::t_9933fd2ee4f175 1-7
+.npmrc
+  s_f55da6088da1e3::t_4c28be0b372605 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "61ad4389406b90b380c741a6f891b749cf735ac8",
+  "prompts": {},
+  "sessions": {
+    "s_f55da6088da1e3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1fad076c-adea-4231-82c3-dded9448bde0",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Miguel <mi_lmc@hotmail.com>"
+    }
+  }
+}
