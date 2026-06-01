@@ -1,0 +1,19 @@
+app/page.tsx
+  s_f55da6088da1e3::t_14e1b68ea6c928 7-8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "c035f13b78c766bdfd404557225f12033e6727a5",
+  "prompts": {},
+  "sessions": {
+    "s_f55da6088da1e3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1fad076c-adea-4231-82c3-dded9448bde0",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Miguel <mi_lmc@hotmail.com>"
+    }
+  }
+}
