@@ -4,6 +4,8 @@ import { DashboardClient } from "@/components/dashboard-client";
 import { computeTotals } from "@/app/api/networth/_helpers";
 import { fetchUsdBrlRate } from "@/lib/prices";
 
+export const dynamic = "force-dynamic";
+
 async function getNetworthData() {
   const [assets, liabilities, snapshots, rate] = await Promise.all([
     prisma.asset.findMany(),
