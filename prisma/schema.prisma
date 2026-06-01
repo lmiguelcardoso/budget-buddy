@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AssetType {
+  STOCK
+  CRYPTO
+  TREASURY
+  CASH
+  OTHER
+}
+
+enum LiabilityType {
+  MORTGAGE
+  CREDIT_CARD
+  STUDENT_LOAN
+  OTHER
+}
+
+enum Currency {
+  USD
+  BRL
+}
+
+model Asset {
+  id             String    @id @default(uuid()) @db.Uuid
+  name           String    @db.VarChar(255)
+  type           AssetType
+  currency       Currency  @default(USD)
+  ticker         String?   @db.VarChar(20)
+  quantity       Decimal   @db.Decimal(18, 8)
+  manualPrice    Decimal?  @map("manual_price") @db.Decimal(18, 8)
+  cachedPrice    Decimal?  @map("cached_price") @db.Decimal(18, 8)
+  priceFetchedAt DateTime? @map("price_fetched_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  @@index([type])
+  @@map("assets")
+}
+
+model Liability {
+  id        String        @id @default(uuid()) @db.Uuid
+  name      String        @db.VarChar(255)
+  type      LiabilityType
+  currency  Currency      @default(USD)
+  amount    Decimal       @db.Decimal(18, 2)
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
+
+  @@index([type])
+  @@map("liabilities")
+}
+
+model NetWorthSnapshot {
+  id                  String   @id @default(uuid()) @db.Uuid
+  totalAssetsUsd      Decimal  @map("total_assets_usd") @db.Decimal(18, 2)
+  totalLiabilitiesUsd Decimal  @map("total_liabilities_usd") @db.Decimal(18, 2)
+  netWorthUsd         Decimal  @map("net_worth_usd") @db.Decimal(18, 2)
+  totalAssetsBrl      Decimal  @map("total_assets_brl") @db.Decimal(18, 2)
+  totalLiabilitiesBrl Decimal  @map("total_liabilities_brl") @db.Decimal(18, 2)
+  netWorthBrl         Decimal  @map("net_worth_brl") @db.Decimal(18, 2)
+  createdAt           DateTime @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@map("net_worth_snapshots")
+}
