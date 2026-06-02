@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import type { Language } from "@/lib/i18n";
 
 interface Settings {
@@ -18,16 +18,15 @@ interface SettingsContextValue {
 const SettingsContext = createContext<SettingsContextValue | null>(null);
 
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
-  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
-
-  useEffect(() => {
+  const [settings, setSettings] = useState<Settings>(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) setSettings({ ...DEFAULT_SETTINGS, ...JSON.parse(stored) });
+      if (stored) return { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
     } catch {
       // ignore malformed storage
     }
-  }, []);
+    return DEFAULT_SETTINGS;
+  });
 
   function update(patch: Partial<Settings>) {
     setSettings((prev) => {

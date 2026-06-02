@@ -1,16 +1,22 @@
 import { prisma } from "@/lib/db";
 import { Prisma, Asset } from "@prisma/client";
+import { redirect } from "next/navigation";
 import { DashboardClient } from "@/components/dashboard-client";
 import { computeTotals } from "@/app/api/networth/_helpers";
 import { fetchUsdBrlRate } from "@/lib/prices";
+import { getCurrentUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
-async function getNetworthData() {
+async function getNetworthData(userId: string) {
   const [assets, liabilities, snapshots, rate] = await Promise.all([
-    prisma.asset.findMany(),
-    prisma.liability.findMany(),
-    prisma.netWorthSnapshot.findMany({ orderBy: { createdAt: "asc" }, take: 10 }),
+    prisma.asset.findMany({ where: { userId } }),
+    prisma.liability.findMany({ where: { userId } }),
+    prisma.netWorthSnapshot.findMany({
+      where: { userId },
+      orderBy: { createdAt: "asc" },
+      take: 10,
+    }),
     fetchUsdBrlRate(),
   ]);
 
@@ -67,6 +73,9 @@ async function getNetworthData() {
 }
 
 export default async function DashboardPage() {
-  const data = await getNetworthData();
+  const user = await getCurrentUser();
+  if (user?.status !== "ACTIVE") redirect("/login");
+
+  const data = await getNetworthData(user.id);
   return <DashboardClient {...data} />;
 }

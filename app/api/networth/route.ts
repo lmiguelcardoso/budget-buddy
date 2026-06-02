@@ -2,18 +2,21 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { ok, serverError } from "@/lib/response";
 import { createLogger } from "@/lib/logger";
+import { authErrorResponse, requireActiveUser } from "@/lib/auth";
 import { computeTotals, serializeSnapshot } from "./_helpers";
 
 const logger = createLogger("api/networth");
 
 export async function GET(req: NextRequest) {
   try {
+    const user = await requireActiveUser();
     const limit = Number(req.nextUrl.searchParams.get("limit") ?? "30");
 
     const [assets, liabilities, snapshots] = await Promise.all([
-      prisma.asset.findMany(),
-      prisma.liability.findMany(),
+      prisma.asset.findMany({ where: { userId: user.id } }),
+      prisma.liability.findMany({ where: { userId: user.id } }),
       prisma.netWorthSnapshot.findMany({
+        where: { userId: user.id },
         orderBy: { createdAt: "asc" },
         take: limit,
       }),
@@ -40,6 +43,8 @@ export async function GET(req: NextRequest) {
       snapshots: snapshots.map(serializeSnapshot),
     });
   } catch (err) {
+    const authResponse = authErrorResponse(err);
+    if (authResponse) return authResponse;
     logger.error("Failed to compute net worth", { err });
     return serverError();
   }

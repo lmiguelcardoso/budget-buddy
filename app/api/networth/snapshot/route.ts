@@ -1,21 +1,24 @@
 import { prisma } from "@/lib/db";
 import { ok, serverError } from "@/lib/response";
 import { createLogger } from "@/lib/logger";
+import { authErrorResponse, requireActiveUser } from "@/lib/auth";
 import { computeTotals, serializeSnapshot } from "../_helpers";
 
 const logger = createLogger("api/networth/snapshot");
 
 export async function POST() {
   try {
+    const user = await requireActiveUser();
     const [assets, liabilities] = await Promise.all([
-      prisma.asset.findMany(),
-      prisma.liability.findMany(),
+      prisma.asset.findMany({ where: { userId: user.id } }),
+      prisma.liability.findMany({ where: { userId: user.id } }),
     ]);
 
     const { usd, brl } = computeTotals(assets, liabilities);
 
     const snapshot = await prisma.netWorthSnapshot.create({
       data: {
+        userId: user.id,
         totalAssetsUsd: usd.totalAssets,
         totalLiabilitiesUsd: usd.totalLiabilities,
         netWorthUsd: usd.netWorth,
@@ -33,6 +36,8 @@ export async function POST() {
 
     return ok(serializeSnapshot(snapshot));
   } catch (err) {
+    const authResponse = authErrorResponse(err);
+    if (authResponse) return authResponse;
     logger.error("Failed to create snapshot", { err });
     return serverError();
   }
