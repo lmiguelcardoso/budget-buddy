@@ -1,0 +1,19 @@
+middleware.ts
+  s_a565decc7ddf73::t_5e472a73aed214 7,9,11,17-20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "5f92412b194353599df9faccf6fb70754fd5a744",
+  "prompts": {},
+  "sessions": {
+    "s_a565decc7ddf73": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "683d76f0-d28d-432a-965f-8dab3b9fa7b6",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Miguel <mi_lmc@hotmail.com>"
+    }
+  }
+}
