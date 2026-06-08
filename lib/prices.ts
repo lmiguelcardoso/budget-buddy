@@ -79,12 +79,12 @@ export async function fetchCryptoPrices(
 
 type AssetStub = Pick<Asset, "id" | "type" | "ticker">;
 
-export async function refreshAllPrices(): Promise<{
+export async function refreshAllPrices(userId: string): Promise<{
   updated: number;
   failed: string[];
 }> {
   const assets = await prisma.asset.findMany({
-    where: { ticker: { not: null }, type: { in: ["STOCK", "CRYPTO"] } },
+    where: { userId, ticker: { not: null }, type: { in: ["STOCK", "CRYPTO"] } },
     select: { id: true, type: true, ticker: true },
   });
 

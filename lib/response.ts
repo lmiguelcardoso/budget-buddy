@@ -25,6 +25,20 @@ export function notFound(error = "Not found"): NextResponse<ApiResponse<null>> {
   );
 }
 
+export function unauthorized(error = "Authentication required"): NextResponse<ApiResponse<null>> {
+  return NextResponse.json(
+    { success: false, message: "Unauthorized", data: null, error },
+    { status: 401 }
+  );
+}
+
+export function forbidden(error = "Forbidden"): NextResponse<ApiResponse<null>> {
+  return NextResponse.json(
+    { success: false, message: "Forbidden", data: null, error },
+    { status: 403 }
+  );
+}
+
 export function serverError(
   error = "Internal server error"
 ): NextResponse<ApiResponse<null>> {

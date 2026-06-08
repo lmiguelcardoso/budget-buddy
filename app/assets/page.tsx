@@ -87,7 +87,12 @@ export default function AssetsPage() {
     if (liabJson.success) setLiabilities(liabJson.data);
   }, []);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      fetchData();
+    }, 0);
+    return () => window.clearTimeout(timeout);
+  }, [fetchData]);
 
   async function deleteAsset(id: string) {
     await fetch(`/api/assets/${id}`, { method: "DELETE" });
