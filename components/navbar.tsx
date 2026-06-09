@@ -42,6 +42,7 @@ export function Navbar() {
   const links = [
     { href: "/", label: t("nav.dashboard") },
     { href: "/assets", label: t("nav.assets") },
+    { href: "/chat", label: t("nav.chat") },
   ];
 
   return (

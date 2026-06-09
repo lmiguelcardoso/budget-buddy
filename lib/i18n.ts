@@ -111,6 +111,16 @@ const translations = {
     "settings.language": "Language",
     "settings.language_desc": "Display language for the interface",
     "settings.toggle_theme": "Toggle theme",
+
+    "nav.chat": "Chat",
+    "chat.title": "Finance Assistant",
+    "chat.new": "New chat",
+    "chat.placeholder": "Ask about your portfolio...",
+    "chat.send": "Send",
+    "chat.empty": "Start a conversation",
+    "chat.empty_desc": "Ask anything about your portfolio, net worth, or financial strategy.",
+    "chat.sending": "Sending…",
+    "chat.error": "Failed to send message. Please try again.",
   },
 
   "pt-BR": {
@@ -212,6 +222,16 @@ const translations = {
     "settings.language": "Idioma",
     "settings.language_desc": "Idioma de exibição da interface",
     "settings.toggle_theme": "Alternar tema",
+
+    "nav.chat": "Chat",
+    "chat.title": "Assistente Financeiro",
+    "chat.new": "Nova conversa",
+    "chat.placeholder": "Pergunte sobre seu portfólio...",
+    "chat.send": "Enviar",
+    "chat.empty": "Inicie uma conversa",
+    "chat.empty_desc": "Pergunte qualquer coisa sobre seu portfólio, patrimônio ou estratégia financeira.",
+    "chat.sending": "Enviando…",
+    "chat.error": "Falha ao enviar mensagem. Tente novamente.",
   },
 } as const;
 
