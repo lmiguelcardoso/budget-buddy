@@ -100,12 +100,13 @@ export async function POST(
       ],
     });
 
-    logger.info("ai result", { keys: Object.keys(result), text: result.text, finishReason: (result as Record<string, unknown>).finishReason });
+    const r = result as unknown as Record<string, unknown>;
+    logger.info("ai result", { keys: Object.keys(r), text: result.text, finishReason: r.finishReason });
 
-    const text = result.text ?? (result as Record<string, unknown>).content as string ?? "";
+    const text = result.text ?? (r.content as string) ?? "";
 
     if (!text) {
-      logger.warn("empty ai response", { userId: user.id, provider, result: JSON.stringify(result) });
+      logger.warn("empty ai response", { userId: user.id, provider, result: JSON.stringify(r) });
     }
 
     const saved = await prisma.message.create({
