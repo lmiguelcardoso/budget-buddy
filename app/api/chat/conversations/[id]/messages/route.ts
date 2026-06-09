@@ -44,7 +44,9 @@ export async function POST(
     const { id } = await params;
 
     const body = sendSchema.safeParse(await req.json());
-    if (!body.success) return NextResponse.json(badRequest(body.error.issues[0].message), { status: 400 });
+    if (!body.success) {
+      return NextResponse.json(badRequest(body.error.issues[0].message), { status: 400 });
+    }
 
     const userRecord = await prisma.user.findUnique({
       where: { id: user.id },
@@ -62,21 +64,22 @@ export async function POST(
     const conversation = await prisma.conversation.findFirst({
       where: { id, userId: user.id },
     });
-    if (!conversation) return NextResponse.json(notFound("Conversation not found"), { status: 404 });
+    if (!conversation) {
+      return NextResponse.json(notFound("Conversation not found"), { status: 404 });
+    }
 
-    // Only fetch valid alternating history: skip any orphaned messages
-    // from previous failed sends (user msg with no assistant reply)
     const allMessages = await prisma.message.findMany({
       where: { conversationId: id },
       orderBy: { createdAt: "asc" },
       select: { role: true, content: true },
     });
 
-    // Build a clean alternating history (must start with user, alternate roles)
+    // Build clean alternating history — skips orphaned same-role messages
+    // left behind by previous failed sends
     const history: { role: "user" | "assistant"; content: string }[] = [];
     for (const m of allMessages) {
       const last = history[history.length - 1];
-      if (last && last.role === m.role) continue; // skip consecutive same-role messages
+      if (last && last.role === m.role) continue;
       history.push({ role: m.role as "user" | "assistant", content: m.content });
     }
 
@@ -94,47 +97,43 @@ export async function POST(
 
     const result = await generateText({
       model,
-      system: `You are a personal finance assistant. Answer questions about the user's portfolio accurately and concisely. Suggest actionable insights when relevant. Do not make up data not present in the portfolio below.\n\n--- PORTFOLIO ---\n${context}`,
-      messages: [
-        ...history,
-        { role: "user", content: body.data.content },
-      ],
+      system: [
+        "You are a personal finance assistant.",
+        "Answer questions about the user's portfolio accurately and concisely.",
+        "Suggest actionable insights when relevant.",
+        "Do not make up data not present in the portfolio below.",
+        "",
+        "--- PORTFOLIO ---",
+        context,
+      ].join("\n"),
+      messages: [...history, { role: "user" as const, content: body.data.content }],
     });
 
-    const text = result.text;
+    const replyText = result.text;
 
-    // Save user message + assistant reply atomically
-    const [, saved] = await prisma.$transaction([
-      prisma.message.create({
-        data: { conversationId: id, role: "user", content: body.data.content },
-      }),
-      prisma.message.create({
-        data: { conversationId: id, role: "assistant", content: text },
-        // select is not directly supported on transaction items,
-        // so we select all and project below
-      }),
-      prisma.conversation.update({
-        where: { id },
-        data: {
-          updatedAt: new Date(),
-          ...(isFirstMessage ? { title: body.data.content.slice(0, 60) } : {}),
-        },
-      }),
-    ]);
+    // Save user message and assistant reply only after AI succeeds
+    await prisma.message.create({
+      data: { conversationId: id, role: "user", content: body.data.content },
+    });
 
-    const response = {
-      id: saved.id,
-      role: saved.role,
-      content: saved.content,
-      createdAt: saved.createdAt,
-    };
+    const assistant = await prisma.message.create({
+      data: { conversationId: id, role: "assistant", content: replyText },
+      select: { id: true, role: true, content: true, createdAt: true },
+    });
+
+    await prisma.conversation.update({
+      where: { id },
+      data: {
+        updatedAt: new Date(),
+        ...(isFirstMessage && { title: body.data.content.slice(0, 60) }),
+      },
+    });
 
     logger.info("message sent", { userId: user.id, conversationId: id, provider });
-    return NextResponse.json(ok(response), { status: 201 });
+    return NextResponse.json(ok(assistant), { status: 201 });
   } catch (error) {
     const authRes = authErrorResponse(error);
     if (authRes) return NextResponse.json(authRes);
-
     const message = error instanceof Error ? error.message : "Failed to send message";
     logger.error("send message failed", { error: message, stack: error instanceof Error ? error.stack : undefined });
     return NextResponse.json(serverError(message));
