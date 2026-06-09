@@ -7,7 +7,7 @@ export type AiProvider = "OPENAI" | "GEMINI" | "ANTHROPIC";
 
 const DEFAULT_MODELS: Record<AiProvider, string> = {
   OPENAI: "gpt-4o-mini",
-  GEMINI: "gemini-1.5-flash",
+  GEMINI: "gemini-2.0-flash",
   ANTHROPIC: "claude-3-5-haiku-20241022",
 };
 
