@@ -103,3 +103,4 @@ Plans live in `~/.claude/plans/`. Each plan file follows this structure:
 | Plan | Feature / Branch | Created |
 |------|-----------------|---------|
 | [~/.claude/plans/i-want-to-change-vectorized-pixel.md](~/.claude/plans/i-want-to-change-vectorized-pixel.md) | Net worth tracker / `feature/invoice-upload` | 2026-05-20 |
+| [~/.claude/plans/i-was-wondering-about-eager-puddle.md](~/.claude/plans/i-was-wondering-about-eager-puddle.md) | Finance Assistant chat (RAG + OpenAI) / `feature/chat-assistant` | 2026-06-08 |

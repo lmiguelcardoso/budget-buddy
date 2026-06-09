@@ -33,6 +33,12 @@ enum AccountStatus {
   SUSPENDED
 }
 
+enum AiProvider {
+  OPENAI
+  GEMINI
+  ANTHROPIC
+}
+
 model User {
   id              String        @id @default(uuid()) @db.Uuid
   email           String        @unique @db.VarChar(255)
@@ -43,10 +49,14 @@ model User {
   createdAt       DateTime      @default(now()) @map("created_at")
   updatedAt       DateTime      @updatedAt @map("updated_at")
 
-  assets     Asset[]
-  liabilities Liability[]
-  sessions   Session[]
-  snapshots  NetWorthSnapshot[]
+  aiProvider    AiProvider?   @map("ai_provider")
+  aiApiKey      String?       @map("ai_api_key")
+
+  assets        Asset[]
+  liabilities   Liability[]
+  sessions      Session[]
+  snapshots     NetWorthSnapshot[]
+  conversations Conversation[]
 
   @@index([status])
   @@map("users")
@@ -121,4 +131,36 @@ model NetWorthSnapshot {
   @@index([userId])
   @@index([createdAt])
   @@map("net_worth_snapshots")
+}
+
+enum MessageRole {
+  user
+  assistant
+}
+
+model Conversation {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  title     String    @default("New conversation") @db.VarChar(255)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages Message[]
+
+  @@index([userId])
+  @@map("conversations")
+}
+
+model Message {
+  id             String       @id @default(uuid()) @db.Uuid
+  conversationId String       @map("conversation_id") @db.Uuid
+  role           MessageRole
+  content        String       @db.Text
+  createdAt      DateTime     @default(now()) @map("created_at")
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@map("messages")
 }
