@@ -1,0 +1,19 @@
+app/api/chat/conversations/[id]/messages/route.ts
+  s_a565decc7ddf73::t_7b1798b8d397af 47-49,67-69,77-78,82,100-109,112,114-130,133
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "b4bd4c611ad39d6ae5ad1fb1ed85a9c4a8d2e794",
+  "prompts": {},
+  "sessions": {
+    "s_a565decc7ddf73": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "683d76f0-d28d-432a-965f-8dab3b9fa7b6",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Miguel <mi_lmc@hotmail.com>"
+    }
+  }
+}
