@@ -38,6 +38,12 @@ export function ChatClient({ initialConversations }: ChatClientProps) {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  async function refreshConversations() {
+    const res = await fetch("/api/chat/conversations");
+    const data = await res.json();
+    if (data.success) setConversations(data.data);
+  }
+
   async function selectConversation(id: string) {
     setActiveId(id);
     setError(null);
@@ -49,17 +55,17 @@ export function ChatClient({ initialConversations }: ChatClientProps) {
   async function newConversation() {
     const res = await fetch("/api/chat/conversations", { method: "POST" });
     const data = await res.json();
-    if (data.success) {
-      setConversations((prev) => [{ ...data.data, updatedAt: new Date().toISOString() }, ...prev]);
-      setActiveId(data.data.id);
-      setMessages([]);
-      setError(null);
-    }
+    if (!data.success) return;
+    await refreshConversations();
+    setActiveId(data.data.id);
+    setMessages([]);
+    setError(null);
   }
 
   async function sendMessage() {
     if (!input.trim() || !activeId || loading) return;
     const content = input.trim();
+    const conversationId = activeId;
     setInput("");
     setLoading(true);
     setError(null);
@@ -73,7 +79,7 @@ export function ChatClient({ initialConversations }: ChatClientProps) {
     setMessages((prev) => [...prev, optimistic]);
 
     try {
-      const res = await fetch(`/api/chat/conversations/${activeId}/messages`, {
+      const res = await fetch(`/api/chat/conversations/${conversationId}/messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content }),
@@ -84,7 +90,7 @@ export function ChatClient({ initialConversations }: ChatClientProps) {
         // Update conversation title if it was the first message
         setConversations((prev) =>
           prev.map((c) =>
-            c.id === activeId
+            c.id === conversationId
               ? { ...c, title: content.slice(0, 60), updatedAt: new Date().toISOString() }
               : c
           )
