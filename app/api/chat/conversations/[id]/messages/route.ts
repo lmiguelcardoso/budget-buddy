@@ -91,7 +91,7 @@ export async function POST(
 
     logger.info("calling ai", { userId: user.id, conversationId: id, provider, historyLength: existingMessages.length });
 
-    const { text } = await generateText({
+    const result = await generateText({
       model,
       system: `You are a personal finance assistant. Answer questions about the user's portfolio accurately and concisely. Suggest actionable insights when relevant. Do not make up data not present in the portfolio below.\n\n--- PORTFOLIO ---\n${context}`,
       messages: [
@@ -99,6 +99,14 @@ export async function POST(
         { role: "user", content: body.data.content },
       ],
     });
+
+    logger.info("ai result", { keys: Object.keys(result), text: result.text, finishReason: (result as Record<string, unknown>).finishReason });
+
+    const text = result.text ?? (result as Record<string, unknown>).content as string ?? "";
+
+    if (!text) {
+      logger.warn("empty ai response", { userId: user.id, provider, result: JSON.stringify(result) });
+    }
 
     const saved = await prisma.message.create({
       data: { conversationId: id, role: "assistant", content: text },
