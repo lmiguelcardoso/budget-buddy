@@ -1,0 +1,47 @@
+components/chat-client.tsx
+  s_a565decc7ddf73::t_3696ac9a8bcc14 1-204
+middleware.ts
+  s_a565decc7ddf73::t_8c51a4f1985de2 25
+lib/i18n.ts
+  s_a565decc7ddf73::t_482dd6212738bf 225-234
+  s_a565decc7ddf73::t_3315c83e1b0508 114-123
+app/chat/page.tsx
+  s_a565decc7ddf73::t_8dd7398ac8fc97 1-26
+components/navbar.tsx
+  s_a565decc7ddf73::t_73a3d2e95e1861 45
+package.json
+  s_a565decc7ddf73::t_2faeb8d6c195f3 18
+app/api/chat/conversations/[id]/messages/route.ts
+  s_a565decc7ddf73::t_594c13bfe32130 1-96
+CLAUDE.md
+  s_a565decc7ddf73::t_d3f1108244cac1 106
+prisma/schema.prisma
+  s_a565decc7ddf73::t_21bdf5505f126f 126-157
+  s_a565decc7ddf73::t_7099393ef93600 46-50
+app/api/chat/conversations/route.ts
+  s_a565decc7ddf73::t_8be9d91cd36e41 1-31
+lib/openai.ts
+  s_a565decc7ddf73::t_f0f9b5db26468c 1-11
+prisma/migrations/20260608235835_add_chat/migration.sql
+  s_a565decc7ddf73::t_4be7e2de896b91 1-36
+.env.example
+  s_a565decc7ddf73::t_11361922dda17e 9-12
+lib/chat-context.ts
+  s_a565decc7ddf73::t_ecd6174c829fee 1-64
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "0d51eb43578623a6872ad96803fb318a94fda7c3",
+  "prompts": {},
+  "sessions": {
+    "s_a565decc7ddf73": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "683d76f0-d28d-432a-965f-8dab3b9fa7b6",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Miguel <mi_lmc@hotmail.com>"
+    }
+  }
+}
