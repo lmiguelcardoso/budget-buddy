@@ -1,0 +1,36 @@
+lib/encryption.ts
+  s_a565decc7ddf73::t_c4b56de6e94439 1-35
+app/api/user/api-key/route.ts
+  s_a565decc7ddf73::t_ac2683292d4feb 1-60
+prisma/schema.prisma
+  s_a565decc7ddf73::t_6bf4871efffd2e 46-47
+.env.example
+  s_a565decc7ddf73::t_9844c41d9f6d29 10,12-15
+lib/i18n.ts
+  s_a565decc7ddf73::t_260dd258abee4f 114-122
+  s_a565decc7ddf73::t_5fe371c5911b18 234-242
+app/api/chat/conversations/[id]/messages/route.ts
+  s_a565decc7ddf73::t_ae2d04861dc915 7-8,47-58,81-86
+components/settings-modal.tsx
+  s_a565decc7ddf73::t_f1eac5cc114c89 3,5,7-10,33-76,129-186
+prisma/migrations/20260609001736_add_user_openai_key/migration.sql
+  s_a565decc7ddf73::t_291a143e336ace 1-2
+lib/openai.ts
+  s_a565decc7ddf73::t_d8eb29a3d8cf1c 4-7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "f1997d3290deb4293590039702dc7668008cfa67",
+  "prompts": {},
+  "sessions": {
+    "s_a565decc7ddf73": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "683d76f0-d28d-432a-965f-8dab3b9fa7b6",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Miguel <mi_lmc@hotmail.com>"
+    }
+  }
+}
