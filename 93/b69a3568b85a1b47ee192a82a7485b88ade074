@@ -1,0 +1,35 @@
+prisma/migrations/20260609015300_add_ai_provider/migration.sql
+  s_a565decc7ddf73::t_cda44406cbc7d5 1-13
+lib/ai.ts
+  s_a565decc7ddf73::t_0539babd3100ec 1-21
+prisma/schema.prisma
+  s_a565decc7ddf73::t_032fd9acd82126 52-53
+  s_a565decc7ddf73::t_5dce17b6dd5abc 36-41
+lib/i18n.ts
+  s_a565decc7ddf73::t_073501cf4e42f9 115-118,121
+  s_a565decc7ddf73::t_07994a8ad51090 236-239,242
+app/api/user/api-key/route.ts
+  s_a565decc7ddf73::t_eae312491206c2 7-9,12-13,21,23-24,26-27,43,45,56
+app/api/chat/conversations/[id]/messages/route.ts
+  s_a565decc7ddf73::t_a5372c621d9366 7,51,54-55,57,86,89-90,92,94-96,104,110
+package.json
+  s_a565decc7ddf73::t_fcbf29650808a7 15-17,19
+components/settings-modal.tsx
+  s_a565decc7ddf73::t_ac15d7355c9839 27-33,40-44,51-56,67,103,120,147,158,161-163,177-197
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "93b69a3568b85a1b47ee192a82a7485b88ade074",
+  "prompts": {},
+  "sessions": {
+    "s_a565decc7ddf73": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "683d76f0-d28d-432a-965f-8dab3b9fa7b6",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Miguel <mi_lmc@hotmail.com>"
+    }
+  }
+}
