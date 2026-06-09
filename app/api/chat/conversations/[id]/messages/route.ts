@@ -4,12 +4,11 @@ import { prisma } from "@/lib/db";
 import { requireActiveUser, authErrorResponse } from "@/lib/auth";
 import { ok, badRequest, notFound, serverError } from "@/lib/response";
 import { buildFinancialContext } from "@/lib/chat-context";
-import { createOpenAIClient, CHAT_MODEL } from "@/lib/openai";
+import { getModel, generateText, type AiProvider } from "@/lib/ai";
 import { decrypt } from "@/lib/encryption";
 import { createLogger } from "@/lib/logger";
 
 const logger = createLogger("chat/messages");
-
 const sendSchema = z.object({ content: z.string().min(1).max(4000) });
 
 export async function GET(
@@ -49,13 +48,13 @@ export async function POST(
 
     const userRecord = await prisma.user.findUnique({
       where: { id: user.id },
-      select: { openaiApiKey: true },
+      select: { aiProvider: true, aiApiKey: true },
     });
 
-    if (!userRecord?.openaiApiKey) {
-      logger.warn("no openai api key", { userId: user.id, conversationId: id });
+    if (!userRecord?.aiApiKey || !userRecord?.aiProvider) {
+      logger.warn("no ai key configured", { userId: user.id, conversationId: id });
       return NextResponse.json(
-        badRequest("No OpenAI API key configured. Add your key in Settings."),
+        badRequest("No AI API key configured. Add your key in Settings."),
         { status: 400 }
       );
     }
@@ -84,35 +83,31 @@ export async function POST(
 
     const [context, apiKey] = await Promise.all([
       buildFinancialContext(user.id),
-      Promise.resolve(decrypt(userRecord.openaiApiKey)),
+      Promise.resolve(decrypt(userRecord.aiApiKey)),
     ]);
 
-    const openai = createOpenAIClient(apiKey);
+    const provider = userRecord.aiProvider as AiProvider;
+    const model = getModel(provider, apiKey);
 
-    logger.info("calling openai", { userId: user.id, conversationId: id, model: CHAT_MODEL, historyLength: existingMessages.length });
+    logger.info("calling ai", { userId: user.id, conversationId: id, provider, historyLength: existingMessages.length });
 
-    const completion = await openai.chat.completions.create({
-      model: CHAT_MODEL,
+    const { text } = await generateText({
+      model,
+      system: `You are a personal finance assistant. Answer questions about the user's portfolio accurately and concisely. Suggest actionable insights when relevant. Do not make up data not present in the portfolio below.\n\n--- PORTFOLIO ---\n${context}`,
       messages: [
-        {
-          role: "system",
-          content: `You are a personal finance assistant. Answer questions about the user's portfolio accurately and concisely. Suggest actionable insights when relevant. Do not make up data not present in the portfolio below.\n\n--- PORTFOLIO ---\n${context}`,
-        },
         ...existingMessages.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
         { role: "user", content: body.data.content },
       ],
     });
 
-    const reply = completion.choices[0].message.content ?? "";
-
     const saved = await prisma.message.create({
-      data: { conversationId: id, role: "assistant", content: reply },
+      data: { conversationId: id, role: "assistant", content: text },
       select: { id: true, role: true, content: true, createdAt: true },
     });
 
     await prisma.conversation.update({ where: { id }, data: { updatedAt: new Date() } });
 
-    logger.info("message sent", { userId: user.id, conversationId: id });
+    logger.info("message sent", { userId: user.id, conversationId: id, provider });
     return NextResponse.json(ok(saved), { status: 201 });
   } catch (error) {
     const authRes = authErrorResponse(error);

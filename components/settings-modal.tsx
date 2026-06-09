@@ -24,23 +24,36 @@ import {
 import { LANGUAGES } from "@/lib/i18n";
 import { useSettings } from "@/hooks/use-settings";
 import type { Language } from "@/lib/i18n";
+import type { AiProvider } from "@/lib/ai";
+
+const AI_PROVIDERS: { value: AiProvider; label: string }[] = [
+  { value: "OPENAI",    label: "OpenAI" },
+  { value: "GEMINI",    label: "Google Gemini" },
+  { value: "ANTHROPIC", label: "Anthropic Claude" },
+];
 
 export function SettingsModal() {
   const [open, setOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const { settings, setLanguage, t } = useSettings();
 
-  const [maskedKey, setMaskedKey] = useState<string | null>(null);
-  const [keyInput, setKeyInput] = useState("");
-  const [showKey, setShowKey] = useState(false);
-  const [keySaving, setKeySaving] = useState(false);
+  const [maskedKey, setMaskedKey]     = useState<string | null>(null);
+  const [provider, setProvider]       = useState<AiProvider>("OPENAI");
+  const [keyInput, setKeyInput]       = useState("");
+  const [showKey, setShowKey]         = useState(false);
+  const [keySaving, setKeySaving]     = useState(false);
   const [keyRemoving, setKeyRemoving] = useState(false);
 
   useEffect(() => {
     if (!open) return;
     fetch("/api/user/api-key")
       .then((r) => r.json())
-      .then((d) => { if (d.success) setMaskedKey(d.data.maskedKey); })
+      .then((d) => {
+        if (d.success && d.data.hasKey) {
+          setMaskedKey(d.data.maskedKey);
+          if (d.data.provider) setProvider(d.data.provider as AiProvider);
+        }
+      })
       .catch(() => undefined);
   }, [open]);
 
@@ -51,7 +64,7 @@ export function SettingsModal() {
       const res = await fetch("/api/user/api-key", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ key: keyInput.trim() }),
+        body: JSON.stringify({ provider, key: keyInput.trim() }),
       });
       const data = await res.json();
       if (data.success) {
@@ -87,6 +100,7 @@ export function SettingsModal() {
           </DialogHeader>
 
           <div className="space-y-6 py-2">
+            {/* Appearance */}
             <div className="space-y-3">
               <p className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
                 {t("settings.appearance")}
@@ -103,6 +117,7 @@ export function SettingsModal() {
 
             <Separator />
 
+            {/* Language */}
             <div className="space-y-3">
               <div>
                 <p className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
@@ -129,6 +144,7 @@ export function SettingsModal() {
 
             <Separator />
 
+            {/* AI Assistant */}
             <div className="space-y-3">
               <div>
                 <p className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
@@ -139,8 +155,12 @@ export function SettingsModal() {
                 </p>
               </div>
 
+              {/* Saved key display */}
               {maskedKey && (
                 <div className="flex items-center justify-between rounded-md border px-3 py-2 text-sm">
+                  <span className="text-xs text-muted-foreground">
+                    {AI_PROVIDERS.find((p) => p.value === provider)?.label}
+                  </span>
                   <span className="font-mono text-muted-foreground">{maskedKey}</span>
                   <Button
                     variant="ghost"
@@ -154,8 +174,27 @@ export function SettingsModal() {
                 </div>
               )}
 
-              <div className="space-y-2">
-                <Label htmlFor="api-key-input">{maskedKey ? t("settings.ai_key_label") + " (replace)" : t("settings.ai_key_label")}</Label>
+              {/* Provider selector */}
+              <div className="space-y-1.5">
+                <Label>{t("settings.ai_provider")}</Label>
+                <Select
+                  value={provider}
+                  onValueChange={(v) => setProvider(v as AiProvider)}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {AI_PROVIDERS.map((p) => (
+                      <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Key input */}
+              <div className="space-y-1.5">
+                <Label htmlFor="api-key-input">{t("settings.ai_key_label")}</Label>
                 <div className="flex gap-2">
                   <div className="relative flex-1">
                     <Input
