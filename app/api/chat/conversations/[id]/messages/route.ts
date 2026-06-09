@@ -64,22 +64,23 @@ export async function POST(
     });
     if (!conversation) return NextResponse.json(notFound("Conversation not found"), { status: 404 });
 
-    const existingMessages = await prisma.message.findMany({
+    // Only fetch valid alternating history: skip any orphaned messages
+    // from previous failed sends (user msg with no assistant reply)
+    const allMessages = await prisma.message.findMany({
       where: { conversationId: id },
       orderBy: { createdAt: "asc" },
       select: { role: true, content: true },
     });
 
-    await prisma.message.create({
-      data: { conversationId: id, role: "user", content: body.data.content },
-    });
-
-    if (existingMessages.length === 0) {
-      await prisma.conversation.update({
-        where: { id },
-        data: { title: body.data.content.slice(0, 60) },
-      });
+    // Build a clean alternating history (must start with user, alternate roles)
+    const history: { role: "user" | "assistant"; content: string }[] = [];
+    for (const m of allMessages) {
+      const last = history[history.length - 1];
+      if (last && last.role === m.role) continue; // skip consecutive same-role messages
+      history.push({ role: m.role as "user" | "assistant", content: m.content });
     }
+
+    const isFirstMessage = allMessages.length === 0;
 
     const [context, apiKey] = await Promise.all([
       buildFinancialContext(user.id),
@@ -89,28 +90,47 @@ export async function POST(
     const provider = userRecord.aiProvider as AiProvider;
     const model = getModel(provider, apiKey);
 
-    logger.info("calling ai", { userId: user.id, conversationId: id, provider, historyLength: existingMessages.length });
+    logger.info("calling ai", { userId: user.id, conversationId: id, provider, historyLength: history.length });
 
     const result = await generateText({
       model,
       system: `You are a personal finance assistant. Answer questions about the user's portfolio accurately and concisely. Suggest actionable insights when relevant. Do not make up data not present in the portfolio below.\n\n--- PORTFOLIO ---\n${context}`,
       messages: [
-        ...existingMessages.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
+        ...history,
         { role: "user", content: body.data.content },
       ],
     });
 
     const text = result.text;
 
-    const saved = await prisma.message.create({
-      data: { conversationId: id, role: "assistant", content: text },
-      select: { id: true, role: true, content: true, createdAt: true },
-    });
+    // Save user message + assistant reply atomically
+    const [, saved] = await prisma.$transaction([
+      prisma.message.create({
+        data: { conversationId: id, role: "user", content: body.data.content },
+      }),
+      prisma.message.create({
+        data: { conversationId: id, role: "assistant", content: text },
+        // select is not directly supported on transaction items,
+        // so we select all and project below
+      }),
+      prisma.conversation.update({
+        where: { id },
+        data: {
+          updatedAt: new Date(),
+          ...(isFirstMessage ? { title: body.data.content.slice(0, 60) } : {}),
+        },
+      }),
+    ]);
 
-    await prisma.conversation.update({ where: { id }, data: { updatedAt: new Date() } });
+    const response = {
+      id: saved.id,
+      role: saved.role,
+      content: saved.content,
+      createdAt: saved.createdAt,
+    };
 
     logger.info("message sent", { userId: user.id, conversationId: id, provider });
-    return NextResponse.json(ok(saved), { status: 201 });
+    return NextResponse.json(ok(response), { status: 201 });
   } catch (error) {
     const authRes = authErrorResponse(error);
     if (authRes) return NextResponse.json(authRes);

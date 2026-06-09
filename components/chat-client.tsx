@@ -47,7 +47,8 @@ export function ChatClient({ initialConversations }: ChatClientProps) {
   async function selectConversation(id: string) {
     setActiveId(id);
     setError(null);
-    const res = await fetch(`/api/chat/conversations/${id}/messages`);
+    setMessages([]);
+    const res = await fetch(`/api/chat/conversations/${id}/messages`, { cache: "no-store" });
     const data = await res.json();
     if (data.success) setMessages(data.data);
   }
