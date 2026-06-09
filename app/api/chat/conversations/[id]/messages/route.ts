@@ -6,6 +6,9 @@ import { ok, badRequest, notFound, serverError } from "@/lib/response";
 import { buildFinancialContext } from "@/lib/chat-context";
 import { createOpenAIClient, CHAT_MODEL } from "@/lib/openai";
 import { decrypt } from "@/lib/encryption";
+import { createLogger } from "@/lib/logger";
+
+const logger = createLogger("chat/messages");
 
 const sendSchema = z.object({ content: z.string().min(1).max(4000) });
 
@@ -50,6 +53,7 @@ export async function POST(
     });
 
     if (!userRecord?.openaiApiKey) {
+      logger.warn("no openai api key", { userId: user.id, conversationId: id });
       return NextResponse.json(
         badRequest("No OpenAI API key configured. Add your key in Settings."),
         { status: 400 }
@@ -85,6 +89,8 @@ export async function POST(
 
     const openai = createOpenAIClient(apiKey);
 
+    logger.info("calling openai", { userId: user.id, conversationId: id, model: CHAT_MODEL, historyLength: existingMessages.length });
+
     const completion = await openai.chat.completions.create({
       model: CHAT_MODEL,
       messages: [
@@ -106,8 +112,14 @@ export async function POST(
 
     await prisma.conversation.update({ where: { id }, data: { updatedAt: new Date() } });
 
+    logger.info("message sent", { userId: user.id, conversationId: id });
     return NextResponse.json(ok(saved), { status: 201 });
   } catch (error) {
-    return NextResponse.json(authErrorResponse(error) ?? serverError("Failed to send message"));
+    const authRes = authErrorResponse(error);
+    if (authRes) return NextResponse.json(authRes);
+
+    const message = error instanceof Error ? error.message : "Failed to send message";
+    logger.error("send message failed", { error: message, stack: error instanceof Error ? error.stack : undefined });
+    return NextResponse.json(serverError(message));
   }
 }

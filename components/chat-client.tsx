@@ -39,7 +39,7 @@ export function ChatClient({ initialConversations }: ChatClientProps) {
   }, [messages]);
 
   async function refreshConversations() {
-    const res = await fetch("/api/chat/conversations");
+    const res = await fetch("/api/chat/conversations", { cache: "no-store" });
     const data = await res.json();
     if (data.success) setConversations(data.data);
   }
@@ -87,7 +87,6 @@ export function ChatClient({ initialConversations }: ChatClientProps) {
       const data = await res.json();
       if (data.success) {
         setMessages((prev) => [...prev, data.data]);
-        // Update conversation title if it was the first message
         setConversations((prev) =>
           prev.map((c) =>
             c.id === conversationId
@@ -96,11 +95,11 @@ export function ChatClient({ initialConversations }: ChatClientProps) {
           )
         );
       } else {
-        setError(t("chat.error"));
+        setError(data.error ?? t("chat.error"));
         setMessages((prev) => prev.filter((m) => m.id !== optimistic.id));
       }
-    } catch {
-      setError(t("chat.error"));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("chat.error"));
       setMessages((prev) => prev.filter((m) => m.id !== optimistic.id));
     } finally {
       setLoading(false);
