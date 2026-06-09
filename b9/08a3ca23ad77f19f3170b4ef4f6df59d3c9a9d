@@ -1,0 +1,25 @@
+app/api/chat/conversations/[id]/messages/route.ts
+  s_a565decc7ddf73::t_2e95f35f0e7ca3 56
+  s_a565decc7ddf73::t_5897653aaba8ae 115,118-123
+  s_a565decc7ddf73::t_43df7c4960eddd 92-93
+  s_a565decc7ddf73::t_57f7c4fe55aad7 9-11
+components/chat-client.tsx
+  s_a565decc7ddf73::t_3067ca781b70fa 42
+  s_a565decc7ddf73::t_52d2203c353d36 98,101-102
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "b908a3ca23ad77f19f3170b4ef4f6df59d3c9a9d",
+  "prompts": {},
+  "sessions": {
+    "s_a565decc7ddf73": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "683d76f0-d28d-432a-965f-8dab3b9fa7b6",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Miguel <mi_lmc@hotmail.com>"
+    }
+  }
+}
