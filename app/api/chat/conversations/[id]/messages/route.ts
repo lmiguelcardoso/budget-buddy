@@ -4,7 +4,8 @@ import { prisma } from "@/lib/db";
 import { requireActiveUser, authErrorResponse } from "@/lib/auth";
 import { ok, badRequest, notFound, serverError } from "@/lib/response";
 import { buildFinancialContext } from "@/lib/chat-context";
-import { openai, CHAT_MODEL } from "@/lib/openai";
+import { createOpenAIClient, CHAT_MODEL } from "@/lib/openai";
+import { decrypt } from "@/lib/encryption";
 
 const sendSchema = z.object({ content: z.string().min(1).max(4000) });
 
@@ -43,6 +44,18 @@ export async function POST(
     const body = sendSchema.safeParse(await req.json());
     if (!body.success) return NextResponse.json(badRequest(body.error.issues[0].message), { status: 400 });
 
+    const userRecord = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: { openaiApiKey: true },
+    });
+
+    if (!userRecord?.openaiApiKey) {
+      return NextResponse.json(
+        badRequest("No OpenAI API key configured. Add your key in Settings."),
+        { status: 400 }
+      );
+    }
+
     const conversation = await prisma.conversation.findFirst({
       where: { id, userId: user.id },
     });
@@ -58,7 +71,6 @@ export async function POST(
       data: { conversationId: id, role: "user", content: body.data.content },
     });
 
-    // Set conversation title from the first user message
     if (existingMessages.length === 0) {
       await prisma.conversation.update({
         where: { id },
@@ -66,7 +78,12 @@ export async function POST(
       });
     }
 
-    const context = await buildFinancialContext(user.id);
+    const [context, apiKey] = await Promise.all([
+      buildFinancialContext(user.id),
+      Promise.resolve(decrypt(userRecord.openaiApiKey)),
+    ]);
+
+    const openai = createOpenAIClient(apiKey);
 
     const completion = await openai.chat.completions.create({
       model: CHAT_MODEL,
